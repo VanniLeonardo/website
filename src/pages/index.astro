@@ -5,8 +5,14 @@ import ProjectCard from '../components/ProjectCard.astro';
 import NewsItem from '../components/NewsItem.astro';
 import HeroMotif from '../components/HeroMotif.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
-import { Content as HeroIntro } from '../content/pages/hero.md';
+import { Content as HeroIntro, frontmatter as hero } from '../content/pages/hero.md';
 import { Content as Bio } from '../content/pages/bio.md';
+
+interface HeroLink {
+  label: string;
+  url: string;
+}
+const heroLinks: HeroLink[] = hero.links ?? [];
 
 const featured = (await getCollection('projects', ({ data }) => data.featured && !data.draft))
   .sort((a, b) => a.data.order - b.data.order)
@@ -39,32 +45,24 @@ const personJsonLd = JSON.stringify({
   {/* Hero */}
   <section class="grid grid-cols-1 gap-10 md:grid-cols-[1fr_240px] md:gap-14">
     <div class="order-2 md:order-1">
-      <h1 class="font-heading text-4xl font-semibold sm:text-5xl">Leonardo Vanni</h1>
-      <p class="mt-3 font-mono text-sm tracking-wide text-accent">
-        3D Computer Vision · Geometric Learning
-      </p>
+      <h1 class="font-heading text-4xl font-semibold sm:text-5xl">{hero.name}</h1>
+      <p class="mt-3 font-mono text-sm tracking-wide text-accent">{hero.subtitle}</p>
       <div class="prose mt-5">
         <HeroIntro />
       </div>
       <ul class="mt-6 flex flex-wrap gap-x-5 gap-y-1">
-        <li>
-          <a
-            href="mailto:info@leonardovanni.com"
-            class="text-sm text-accent underline underline-offset-2 hover:text-text">Email</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://github.com/VanniLeonardo"
-            class="text-sm text-accent underline underline-offset-2 hover:text-text">GitHub</a
-          >
-        </li>
-        <li>
-          <a
-            href="https://www.linkedin.com/in/leonardo-vanni/"
-            class="text-sm text-accent underline underline-offset-2 hover:text-text">LinkedIn</a
-          >
-        </li>
+        {
+          heroLinks.map((link) => (
+            <li>
+              <a
+                href={link.url}
+                class="text-sm text-accent underline underline-offset-2 hover:text-text"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </div>
     <div class="order-1 mx-auto w-44 sm:w-52 md:order-2 md:mx-0 md:w-full">

@@ -1,10 +1,17 @@
-<!-- TODO(owner): MISSING CONTENT.
-     handoff/content/pages/hero.md was NOT among the files delivered to
-     Claude Code, so this stub was created instead. Paste the final hero.md
-     from the handoff package here verbatim (frontmatter + body).
+---
+# Homepage hero — render exactly; do not embellish.
+name: "Leonardo Vanni"
+subtitle: "3D Computer Vision · Geometric Learning"
+links:
+  - label: "Email"
+    url: "mailto:info@leonardovanni.com"
+  - label: "GitHub"
+    url: "https://github.com/VanniLeonardo"
+  - label: "LinkedIn"
+    url: "https://www.linkedin.com/in/leonardo-vanni/"
+---
 
-     Wiring: the homepage (src/pages/index.astro) renders this file's body as
-     the hero intro paragraph. The h1 name ("Leonardo Vanni") and the subtitle
-     ("3D Computer Vision · Geometric Learning") are currently hardcoded in
-     index.astro from the brief's identity facts — if the final hero.md also
-     carries those in frontmatter, adjust index.astro accordingly. -->
+I work on 3D and 4D computer vision — currently on reconstructing dynamic
+scenes from egocentric video, and on making 3D foundation models aware of
+their own uncertainty. I care about methods that respect the geometry of the
+problem.

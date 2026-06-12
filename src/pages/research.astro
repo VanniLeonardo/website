@@ -1,13 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
-import { Content as Research } from '../content/pages/research.md';
+import { Content as Research, frontmatter } from '../content/pages/research.md';
 ---
 
-<Base
-  title="Research — Leonardo Vanni"
-  description="Research by Leonardo Vanni in 3D computer vision and geometric learning."
->
-  <h1 class="font-heading text-3xl font-semibold">Research</h1>
+<Base title="Research — Leonardo Vanni" description={frontmatter.description}>
+  <h1 class="font-heading text-3xl font-semibold">{frontmatter.title}</h1>
   <div class="prose mt-6">
     <Research />
   </div>

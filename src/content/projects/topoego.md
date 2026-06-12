@@ -21,7 +21,7 @@ tags:
 role: "First author"
 # Affiliation note: Tombari can alternatively be listed as "(TUM & Google)" —
 # many of his papers use the dual affiliation. Confirm his preference before launch.
-collaborators: "with Chiara Plizzari (Bocconi University), Stefano Gasperini (TUM), and Federico Tombari (TUM)"
+collaborators: "with Chiara Plizzari (Bocconi University), Stefano Gasperini (TUM), and Federico Tombari (TUM & Google)"
 status: ongoing
 period: "Jan 2026 – present"
 comingSoon: "Paper, code, and the TopoEgo benchmark will be released publicly upon acceptance."

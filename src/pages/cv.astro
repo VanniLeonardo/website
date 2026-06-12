@@ -1,13 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
-import { Content as CvBody } from '../content/pages/cv-page.md';
+import { Content as CvBody, frontmatter } from '../content/pages/cv-page.md';
 ---
 
-<Base title="CV — Leonardo Vanni" description="Curriculum vitae of Leonardo Vanni.">
-  <h1 class="font-heading text-3xl font-semibold">CV</h1>
+<Base title="CV — Leonardo Vanni" description={frontmatter.description}>
+  <h1 class="font-heading text-3xl font-semibold">{frontmatter.title}</h1>
 
   <a
-    href="/cv/leonardo-vanni-cv.pdf"
+    href={frontmatter.pdf}
     class="mt-6 inline-block rounded-lg bg-accent px-5 py-2.5 font-medium text-bg hover:bg-text"
   >
     Download CV (PDF)

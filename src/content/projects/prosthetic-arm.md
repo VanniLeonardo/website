@@ -25,7 +25,7 @@ links:
   - label: "Code (GitHub)"
     url: "https://github.com/VanniLeonardo/Prosthetic-Arm"
   - label: "Report (ResearchGate)"
-    url: "[PLACEHOLDER: ResearchGate report URL — copy from CV link]"
+    url: "https://www.researchgate.net/publication/393399982_Vision-Based_Grasp_Validation_for_Prosthetic_Arms_using_3D_Scene_Analysis"
 featured: true
 order: 3
 ---

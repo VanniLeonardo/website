@@ -19,37 +19,21 @@ no CDN or third-party requests anywhere.
 | `npm run check`   | Type-check (`astro check`)                        |
 | `npm run og`      | Regenerate `public/og-default.png` from the fonts |
 
-## ⚠ Missing content (action required before launch)
-
-Five page-body files from the handoff package (`handoff/content/pages/`) were
-**not** included in the files delivered during the build. Stubs with TODO
-comments sit in their place — paste the final files verbatim over them:
-
-| Missing handoff file | Paste into                          | Drives                        |
-| -------------------- | ----------------------------------- | ----------------------------- |
-| `hero.md`            | `src/content/pages/hero.md`         | Homepage hero intro paragraph |
-| `research.md`        | `src/content/pages/research.md`     | `/research/` body (KaTeX on)  |
-| `teaching.md`        | `src/content/pages/teaching.md`     | `/teaching/` body             |
-| `thesis-page.md`     | `src/content/pages/thesis-page.md`  | `/thesis/` body               |
-| `cv-page.md`         | `src/content/pages/cv-page.md`      | `/cv/` body                   |
-
-Each stub documents how it is wired. Two derived elements on `/thesis/`
-(`src/pages/thesis.astro`) need reconciling once `thesis-page.md` arrives: the
-BibTeX "Cite" block (currently assembled from the brief's verified facts) and
-the commented figure slots.
-
 ## Owner-supplied assets (never commit placeholders)
 
-Drop these files at exactly these paths — links/buttons are already wired and
-the site builds fine while they are missing (the download links 404 until the
-files exist, which is expected):
+Still missing — drop these files at exactly these paths. Links/buttons are
+already wired and the site builds fine while they are missing (the download
+links 404 until the files exist, which is expected):
 
 - `public/cv/leonardo-vanni-cv.pdf` — CV, **no phone number**
 - `public/thesis/vanni-2026-bsc-thesis.pdf` — thesis PDF, acknowledgements removed
-- `src/assets/photo.jpg` — portrait; then follow the commented swap block in
-  `src/components/PhotoPlaceholder.astro`
-- two thesis figures under `src/assets/figures/` — then uncomment the
-  `<Image>` slots in `src/pages/thesis.astro`
+- two thesis figures in `src/assets/thesis/` (export per the FIGURES comment
+  in `src/content/pages/thesis-page.md`), then uncomment the `<Image>` slots
+  in `src/pages/thesis.astro` and match the filenames
+
+Already in place: `src/assets/photo.jpg` (rendered by
+`src/components/PhotoPlaceholder.astro` via `astro:assets`, center-cropped to
+a 480×480 square).
 
 ## Editing content
 
@@ -98,8 +82,8 @@ search the codebase for `AFTER TUM ANNOUNCEMENT` and follow each comment:
 
 1. `src/content/pages/bio.md` — insert the TUM clause after the Polytechnique
    clause as the comment specifies.
-2. `src/content/pages/cv-page.md` — per the comment in the final handoff file
-   (also update the CV PDF itself).
+2. `src/content/pages/cv-page.md` — add the TUM entry under Education where
+   the comment marks it (also update the CV PDF itself).
 3. Off-site (handoff `extras/`, not in this repo): GitHub profile README and
    LinkedIn headline/About.
 

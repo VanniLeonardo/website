@@ -1,42 +1,34 @@
 ---
-import { getEntry } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import { Content as ThesisBody } from '../content/pages/thesis-page.md';
-
-const thesis = await getEntry('projects', 'thesis');
-if (!thesis) throw new Error('projects/thesis.md is missing');
-const { title, oneLiner } = thesis.data;
+import { Content as ThesisBody, frontmatter as thesis } from '../content/pages/thesis-page.md';
 
 /*
-  FIGURES — commented <Image> slots.
-  The two thesis figures are owner-supplied and absent at build time; the
-  build must never fail over them. When the files exist under
-  src/assets/figures/, uncomment the imports below and the <Image> blocks in
-  the template, and reconcile filenames/captions with the FIGURES comment in
-  the final handoff thesis-page.md.
+  FIGURES — commented <Image> slots, per the FIGURES comment in
+  src/content/pages/thesis-page.md: export the two figures from the thesis
+  PDF into src/assets/thesis/, then uncomment the imports below and the
+  <figure> blocks in the template (adjust the filenames to match the
+  exported files).
 
   import { Image } from 'astro:assets';
-  import figure1 from '../assets/figures/thesis-figure-1.png';
-  import figure2 from '../assets/figures/thesis-figure-2.png';
+  import calibration from '../assets/thesis/calibration.png';
+  import ellipsoids from '../assets/thesis/ellipsoids.png';
 */
 
-// TODO(owner): handoff thesis-page.md was not delivered to Claude Code; this
-// BibTeX is assembled from the brief's verified facts (author, title,
-// institution, year). Replace it with the exact Cite block from the final
-// thesis-page.md if it differs.
-const citation = `@thesis{vanni2026geometrically,
+// BibTeX from the Cite block in src/content/pages/thesis-page.md.
+const citation = `@thesis{vanni2026geometric,
   author      = {Vanni, Leonardo},
-  title       = {Geometrically-Grounded Uncertainty Quantification for
-                 Foundational 3D Vision Models},
-  type        = {Bachelor's thesis},
-  institution = {Bocconi University},
+  title       = {Geometrically-Grounded Uncertainty Quantification
+                 for Foundational 3D Vision Models},
+  school      = {Bocconi University},
   year        = {2026},
+  type        = {BSc thesis},
+  note        = {Supervisor: Alessandro Pigati}
 }`;
 
 const thesisJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'Thesis',
-  name: title,
+  name: thesis.title,
   author: {
     '@type': 'Person',
     name: 'Leonardo Vanni',
@@ -44,22 +36,22 @@ const thesisJsonLd = JSON.stringify({
   },
   sourceOrganization: {
     '@type': 'CollegeOrUniversity',
-    name: 'Bocconi University',
+    name: thesis.institution,
   },
-  datePublished: '2026',
+  datePublished: String(thesis.year),
 });
 ---
 
-<Base title="Thesis — Leonardo Vanni" description={oneLiner}>
+<Base title="Thesis — Leonardo Vanni" description={thesis.description}>
   <script type="application/ld+json" is:inline slot="head" set:html={thesisJsonLd} />
 
   <header class="max-w-[72ch]">
-    <h1 class="font-heading text-3xl font-semibold text-balance">{title}</h1>
+    <h1 class="font-heading text-3xl font-semibold text-balance">{thesis.title}</h1>
     <p class="mt-4 font-mono text-xs tracking-wide text-muted">
-      BSc thesis · Bocconi University · 2026 · Supervisor: Prof. Alessandro Pigati
+      {thesis.kind} · {thesis.institution} · {thesis.year} · Supervisor: {thesis.supervisor}
     </p>
     <a
-      href="/thesis/vanni-2026-bsc-thesis.pdf"
+      href={thesis.pdf}
       class="mt-6 inline-block rounded-lg bg-accent px-5 py-2.5 font-medium text-bg hover:bg-text"
     >
       Download thesis (PDF)
@@ -72,16 +64,22 @@ const thesisJsonLd = JSON.stringify({
 
   {/*
     Figure slots — uncomment together with the imports in the frontmatter
-    once the owner has added the files under src/assets/figures/:
+    once the files exist in src/assets/thesis/:
 
     <figure class="mt-10 max-w-[72ch]">
-      <Image src={figure1} alt="" class="rounded-lg border border-border" />
-      <figcaption class="mt-2 text-sm text-muted"></figcaption>
+      <Image src={calibration} alt="Calibration plot" class="rounded-lg border border-border" />
+      <figcaption class="mt-2 text-sm text-muted">
+        Temperature scaling (T = 3.33) aligns the empirical Mahalanobis CDF
+        with the theoretical chi-squared ideal.
+      </figcaption>
     </figure>
 
     <figure class="mt-10 max-w-[72ch]">
-      <Image src={figure2} alt="" class="rounded-lg border border-border" />
-      <figcaption class="mt-2 text-sm text-muted"></figcaption>
+      <Image src={ellipsoids} alt="Uncertainty ellipsoid render" class="rounded-lg border border-border" />
+      <figcaption class="mt-2 text-sm text-muted">
+        Predicted translational uncertainty grows with distance from the
+        reference camera and aligns with COLMAP's analytical covariance axes.
+      </figcaption>
     </figure>
   */}
 
