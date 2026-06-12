@@ -1,0 +1,17 @@
+---
+interface Props {
+  status: 'ongoing' | 'completed' | 'public';
+}
+
+const { status } = Astro.props;
+
+const colors: Record<Props['status'], string> = {
+  ongoing: 'text-accent',
+  completed: 'text-muted',
+  public: 'text-status-public',
+};
+---
+
+<span class:list={['font-mono text-[11px] tracking-widest uppercase', colors[status]]}>
+  {status}
+</span>

@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import { Content as Contact, frontmatter } from '../content/pages/contact.md';
+---
+
+<Base title="Contact — Leonardo Vanni" description={frontmatter.description}>
+  <h1 class="font-heading text-3xl font-semibold">{frontmatter.title}</h1>
+  <div class="prose mt-6">
+    <Contact />
+  </div>
+</Base>

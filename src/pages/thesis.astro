@@ -1,0 +1,93 @@
+---
+import { getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { Content as ThesisBody } from '../content/pages/thesis-page.md';
+
+const thesis = await getEntry('projects', 'thesis');
+if (!thesis) throw new Error('projects/thesis.md is missing');
+const { title, oneLiner } = thesis.data;
+
+/*
+  FIGURES — commented <Image> slots.
+  The two thesis figures are owner-supplied and absent at build time; the
+  build must never fail over them. When the files exist under
+  src/assets/figures/, uncomment the imports below and the <Image> blocks in
+  the template, and reconcile filenames/captions with the FIGURES comment in
+  the final handoff thesis-page.md.
+
+  import { Image } from 'astro:assets';
+  import figure1 from '../assets/figures/thesis-figure-1.png';
+  import figure2 from '../assets/figures/thesis-figure-2.png';
+*/
+
+// TODO(owner): handoff thesis-page.md was not delivered to Claude Code; this
+// BibTeX is assembled from the brief's verified facts (author, title,
+// institution, year). Replace it with the exact Cite block from the final
+// thesis-page.md if it differs.
+const citation = `@thesis{vanni2026geometrically,
+  author      = {Vanni, Leonardo},
+  title       = {Geometrically-Grounded Uncertainty Quantification for
+                 Foundational 3D Vision Models},
+  type        = {Bachelor's thesis},
+  institution = {Bocconi University},
+  year        = {2026},
+}`;
+
+const thesisJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Thesis',
+  name: title,
+  author: {
+    '@type': 'Person',
+    name: 'Leonardo Vanni',
+    url: 'https://www.leonardovanni.com',
+  },
+  sourceOrganization: {
+    '@type': 'CollegeOrUniversity',
+    name: 'Bocconi University',
+  },
+  datePublished: '2026',
+});
+---
+
+<Base title="Thesis — Leonardo Vanni" description={oneLiner}>
+  <script type="application/ld+json" is:inline slot="head" set:html={thesisJsonLd} />
+
+  <header class="max-w-[72ch]">
+    <h1 class="font-heading text-3xl font-semibold text-balance">{title}</h1>
+    <p class="mt-4 font-mono text-xs tracking-wide text-muted">
+      BSc thesis · Bocconi University · 2026 · Supervisor: Prof. Alessandro Pigati
+    </p>
+    <a
+      href="/thesis/vanni-2026-bsc-thesis.pdf"
+      class="mt-6 inline-block rounded-lg bg-accent px-5 py-2.5 font-medium text-bg hover:bg-text"
+    >
+      Download thesis (PDF)
+    </a>
+  </header>
+
+  <div class="prose mt-10">
+    <ThesisBody />
+  </div>
+
+  {/*
+    Figure slots — uncomment together with the imports in the frontmatter
+    once the owner has added the files under src/assets/figures/:
+
+    <figure class="mt-10 max-w-[72ch]">
+      <Image src={figure1} alt="" class="rounded-lg border border-border" />
+      <figcaption class="mt-2 text-sm text-muted"></figcaption>
+    </figure>
+
+    <figure class="mt-10 max-w-[72ch]">
+      <Image src={figure2} alt="" class="rounded-lg border border-border" />
+      <figcaption class="mt-2 text-sm text-muted"></figcaption>
+    </figure>
+  */}
+
+  <section class="mt-12 max-w-[72ch]">
+    <h2 class="font-heading text-2xl font-semibold">Cite</h2>
+    <pre
+      class="mt-4 overflow-x-auto rounded-lg border border-border bg-surface p-4 font-mono text-[0.8rem] leading-relaxed"><code>{citation}</code></pre>
+  </section>
+</Base>

@@ -1,0 +1,102 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import NewsItem from '../components/NewsItem.astro';
+import HeroMotif from '../components/HeroMotif.astro';
+import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
+import { Content as HeroIntro } from '../content/pages/hero.md';
+import { Content as Bio } from '../content/pages/bio.md';
+
+const featured = (await getCollection('projects', ({ data }) => data.featured && !data.draft))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+
+const news = (await getCollection('news'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+
+const personJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Leonardo Vanni',
+  url: 'https://www.leonardovanni.com',
+  sameAs: ['https://github.com/VanniLeonardo', 'https://www.linkedin.com/in/leonardo-vanni/'],
+  affiliation: {
+    '@type': 'CollegeOrUniversity',
+    name: 'Bocconi University',
+  },
+  email: 'mailto:info@leonardovanni.com',
+});
+---
+
+<Base
+  title="Leonardo Vanni — 3D Computer Vision & Geometric Learning"
+  description="Leonardo Vanni — researcher in 3D computer vision and geometric learning: 4D Gaussian Splatting for egocentric vision, SE(3)-consistent uncertainty for learned structure-from-motion, real-time vision systems."
+>
+  <script type="application/ld+json" is:inline slot="head" set:html={personJsonLd} />
+
+  {/* Hero */}
+  <section class="grid grid-cols-1 gap-10 md:grid-cols-[1fr_240px] md:gap-14">
+    <div class="order-2 md:order-1">
+      <h1 class="font-heading text-4xl font-semibold sm:text-5xl">Leonardo Vanni</h1>
+      <p class="mt-3 font-mono text-sm tracking-wide text-accent">
+        3D Computer Vision · Geometric Learning
+      </p>
+      <div class="prose mt-5">
+        <HeroIntro />
+      </div>
+      <ul class="mt-6 flex flex-wrap gap-x-5 gap-y-1">
+        <li>
+          <a
+            href="mailto:info@leonardovanni.com"
+            class="text-sm text-accent underline underline-offset-2 hover:text-text">Email</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://github.com/VanniLeonardo"
+            class="text-sm text-accent underline underline-offset-2 hover:text-text">GitHub</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://www.linkedin.com/in/leonardo-vanni/"
+            class="text-sm text-accent underline underline-offset-2 hover:text-text">LinkedIn</a
+          >
+        </li>
+      </ul>
+    </div>
+    <div class="order-1 mx-auto w-44 sm:w-52 md:order-2 md:mx-0 md:w-full">
+      <PhotoPlaceholder />
+      {/* Quiet aside under the portrait on wide screens */}
+      <div class="mt-6 hidden opacity-60 md:block">
+        <HeroMotif />
+      </div>
+    </div>
+  </section>
+
+  {/* Selected work */}
+  <section class="mt-16">
+    <h2 class="font-heading text-2xl font-semibold">Selected work</h2>
+    <div class="mt-6 grid gap-5">
+      {featured.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </section>
+
+  {/* Short bio */}
+  <section class="mt-16">
+    <h2 class="font-heading text-2xl font-semibold">About</h2>
+    <div class="prose mt-4">
+      <Bio />
+    </div>
+  </section>
+
+  {/* News */}
+  <section class="mt-16">
+    <h2 class="font-heading text-2xl font-semibold">News</h2>
+    <ul class="mt-5 grid gap-3">
+      {news.map((item) => <NewsItem date={item.data.date} text={item.data.text} />)}
+    </ul>
+  </section>
+</Base>

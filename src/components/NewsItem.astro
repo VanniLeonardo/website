@@ -1,0 +1,26 @@
+---
+interface Props {
+  date: Date;
+  text: string;
+}
+
+const { date, text } = Astro.props;
+const iso = date.toISOString().slice(0, 10);
+
+// News text may contain one inline markdown link. Escape everything first,
+// then turn [label](url) into an anchor — no markdown pipeline needed.
+const escaped = text
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;');
+const html = escaped.replace(
+  /\[([^\]]+)\]\(([^)\s]+)\)/g,
+  '<a href="$2" class="text-accent underline underline-offset-2 hover:text-text">$1</a>',
+);
+---
+
+<li class="flex items-baseline gap-4">
+  <time datetime={iso} class="shrink-0 font-mono text-xs text-muted">{iso}</time>
+  <p class="text-[0.95rem]" set:html={html} />
+</li>

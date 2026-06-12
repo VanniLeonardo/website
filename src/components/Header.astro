@@ -1,0 +1,56 @@
+---
+const links = [
+  { href: '/research/', label: 'Research' },
+  { href: '/projects/', label: 'Projects' },
+  { href: '/thesis/', label: 'Thesis' },
+  { href: '/cv/', label: 'CV' },
+  { href: '/teaching/', label: 'Teaching & Leadership' },
+  { href: '/notes/', label: 'Notes' },
+  { href: '/contact/', label: 'Contact' },
+];
+
+const path = Astro.url.pathname.endsWith('/')
+  ? Astro.url.pathname
+  : `${Astro.url.pathname}/`;
+const isActive = (href: string) => path === href || path.startsWith(href);
+---
+
+{/* Mobile menu is a CSS-only disclosure (checkbox + peer) — no JavaScript. */}
+<header class="border-b border-border">
+  <div
+    class="mx-auto flex max-w-5xl flex-wrap items-baseline justify-between gap-x-6 px-5 py-4 sm:px-8"
+  >
+    <a href="/" class="font-heading text-lg font-semibold text-text hover:text-accent"
+      >Leonardo Vanni</a
+    >
+
+    <input type="checkbox" id="nav-toggle" class="peer sr-only" />
+    <label
+      for="nav-toggle"
+      class="cursor-pointer select-none rounded-lg border border-border px-3 py-1 font-mono text-[11px] tracking-wider text-muted uppercase peer-checked:border-accent peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent hover:border-accent md:hidden"
+    >
+      Menu
+    </label>
+
+    <nav aria-label="Main navigation" class="hidden w-full peer-checked:block md:block md:w-auto">
+      <ul class="flex flex-col gap-1 pt-3 md:flex-row md:gap-x-5 md:pt-0">
+        {
+          links.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                aria-current={isActive(link.href) ? 'page' : undefined}
+                class:list={[
+                  'block py-1 text-sm md:py-0',
+                  isActive(link.href) ? 'text-accent' : 'text-muted hover:text-accent',
+                ]}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>

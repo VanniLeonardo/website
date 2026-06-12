@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+import { Content as CvBody } from '../content/pages/cv-page.md';
+---
+
+<Base title="CV — Leonardo Vanni" description="Curriculum vitae of Leonardo Vanni.">
+  <h1 class="font-heading text-3xl font-semibold">CV</h1>
+
+  <a
+    href="/cv/leonardo-vanni-cv.pdf"
+    class="mt-6 inline-block rounded-lg bg-accent px-5 py-2.5 font-medium text-bg hover:bg-text"
+  >
+    Download CV (PDF)
+  </a>
+
+  {/* Contact: email / LinkedIn / GitHub only — never a phone number. */}
+  <ul class="mt-6 flex flex-wrap gap-x-5 gap-y-1">
+    <li>
+      <a
+        href="mailto:info@leonardovanni.com"
+        class="text-sm text-accent underline underline-offset-2 hover:text-text"
+        >info@leonardovanni.com</a
+      >
+    </li>
+    <li>
+      <a
+        href="https://www.linkedin.com/in/leonardo-vanni/"
+        class="text-sm text-accent underline underline-offset-2 hover:text-text">LinkedIn</a
+      >
+    </li>
+    <li>
+      <a
+        href="https://github.com/VanniLeonardo"
+        class="text-sm text-accent underline underline-offset-2 hover:text-text">GitHub</a
+      >
+    </li>
+  </ul>
+
+  <div class="prose mt-8">
+    <CvBody />
+  </div>
+</Base>

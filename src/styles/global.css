@@ -1,0 +1,209 @@
+@import 'tailwindcss';
+/* KaTeX styles — imported once here, build-time math rendering only. */
+@import 'katex/dist/katex.min.css';
+
+/* Self-hosted fonts, latin subset only, font-display: swap.
+   Declared by hand (instead of importing the fontsource CSS) so that only
+   the latin woff2 files are bundled. */
+@font-face {
+  font-family: 'Space Grotesk Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url('../../node_modules/@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2')
+    format('woff2-variations');
+}
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2')
+    format('woff2-variations');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('../../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2')
+    format('woff2');
+}
+
+/* Design tokens */
+:root {
+  --bg: #0a0f1c;
+  --surface: #101725;
+  --border: #1e2a3d;
+  --text: #e6eaf2;
+  --muted: #94a3b8;
+  --accent: #7aa7e8;
+  --status-public: #7bc4a2;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-status-public: var(--status-public);
+
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+}
+
+@layer base {
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem; /* 17px */
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+
+  /* Nothing on the site moves, but respect the preference regardless. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Long-form markdown bodies */
+.prose {
+  max-width: 72ch;
+}
+
+.prose p {
+  margin-block: 1em;
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose a:hover {
+  color: var(--text);
+}
+
+.prose strong {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.prose h2 {
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-size: 1.4rem;
+}
+
+.prose h3 {
+  margin-top: 1.6em;
+  margin-bottom: 0.5em;
+  font-size: 1.15rem;
+}
+
+.prose ul,
+.prose ol {
+  margin-block: 1em;
+  padding-inline-start: 1.5em;
+}
+
+.prose ul {
+  list-style: disc;
+}
+
+.prose ol {
+  list-style: decimal;
+}
+
+.prose li {
+  margin-block: 0.35em;
+}
+
+.prose blockquote {
+  margin-block: 1.25em;
+  border-inline-start: 2px solid var(--border);
+  padding-inline-start: 1em;
+  color: var(--muted);
+}
+
+.prose hr {
+  margin-block: 2em;
+  border-color: var(--border);
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+.prose :not(pre) > code {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--surface);
+  padding: 0.1em 0.35em;
+}
+
+.prose pre {
+  margin-block: 1.25em;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.prose table {
+  margin-block: 1.25em;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid var(--border);
+  padding: 0.4em 0.75em;
+  text-align: left;
+}
+
+.prose th {
+  font-family: var(--font-heading);
+  font-weight: 500;
+}
+
+/* Wide display equations scroll instead of overflowing. */
+.prose .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.25em;
+}

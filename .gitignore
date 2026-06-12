@@ -1,0 +1,21 @@
+# build output
+dist/
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+
+# local lighthouse reports
+lh-*.json
+
+# environment variables
+.env
+.env.production
+
+# OS / editor
+.DS_Store
+Thumbs.db

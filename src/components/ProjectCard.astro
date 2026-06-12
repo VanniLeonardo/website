@@ -1,0 +1,61 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import StatusBadge from './StatusBadge.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, oneLiner, abstract, tags, role, collaborators, status, period, links, comingSoon } =
+  project.data;
+
+// Links whose URL contains "[PLACEHOLDER" stay in the content file but are
+// never rendered (e.g. the Prosthetic-Arm ResearchGate report link).
+const visibleLinks = (links ?? []).filter((link) => !link.url.includes('[PLACEHOLDER'));
+---
+
+<article class="rounded-lg border border-border bg-surface p-6 hover:border-accent">
+  <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+    <h3 class="font-heading text-lg font-semibold">{title}</h3>
+    <StatusBadge status={status} />
+  </div>
+
+  <p class="mt-1 text-sm text-muted">{oneLiner}</p>
+
+  <p class="mt-4 text-[0.95rem] leading-relaxed">{abstract.trim()}</p>
+
+  <p class="mt-4 text-sm text-muted">{role}</p>
+  {collaborators && <p class="mt-0.5 text-sm text-muted">{collaborators}</p>}
+  <p class="mt-2 font-mono text-xs text-muted">{period}</p>
+
+  <ul class="mt-4 flex flex-wrap gap-1.5">
+    {
+      tags.map((tag) => (
+        <li class="rounded-lg border border-border px-2 py-0.5 font-mono text-[11px] tracking-wide text-muted uppercase">
+          {tag}
+        </li>
+      ))
+    }
+  </ul>
+
+  {/* Links row OR the muted comingSoon line — never both. */}
+  {
+    visibleLinks.length > 0 ? (
+      <ul class="mt-5 flex flex-wrap gap-x-5 gap-y-1">
+        {visibleLinks.map((link) => (
+          <li>
+            <a
+              href={link.url}
+              class="text-sm text-accent underline underline-offset-2 hover:text-text"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : comingSoon ? (
+      <p class="mt-5 text-sm text-muted italic">{comingSoon}</p>
+    ) : null
+  }
+</article>
