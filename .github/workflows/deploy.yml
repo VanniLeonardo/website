@@ -24,7 +24,11 @@ jobs:
         # Installs deps, builds, and uploads ./dist as the Pages artifact.
         # public/CNAME is copied into dist, so the custom domain
         # (www.leonardovanni.com) survives every deploy.
+        # node-version 22 is required: Astro 6 needs Node >= 22.12, while the
+        # action defaults to Node 20.
         uses: withastro/action@v3
+        with:
+          node-version: 22
 
   deploy:
     needs: build
