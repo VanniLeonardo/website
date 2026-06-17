@@ -21,19 +21,9 @@ no CDN or third-party requests anywhere.
 
 ## Owner-supplied assets (never commit placeholders)
 
-Still missing — drop these files at exactly these paths. Links/buttons are
-already wired and the site builds fine while they are missing (the download
-links 404 until the files exist, which is expected):
+Still missing:
 
-- `public/cv/leonardo-vanni-cv.pdf` — CV, **no phone number**
 - `public/thesis/vanni-2026-bsc-thesis.pdf` — thesis PDF, acknowledgements removed
-- two thesis figures in `src/assets/thesis/` (export per the FIGURES comment
-  in `src/content/pages/thesis-page.md`), then uncomment the `<Image>` slots
-  in `src/pages/thesis.astro` and match the filenames
-
-Already in place: `src/assets/photo.jpg` (rendered by
-`src/components/PhotoPlaceholder.astro` via `astro:assets`, center-cropped to
-a 480×480 square).
 
 ## Editing content
 
@@ -102,13 +92,7 @@ When the paper/code/benchmark go public (see the binding comment in
 ## Deployment (GitHub Pages)
 
 `.github/workflows/deploy.yml` builds with `withastro/action` and deploys via
-`actions/deploy-pages` on every push to `main`. One-time repo setup:
-
-1. Push to GitHub; in **Settings → Pages** set Source to **GitHub Actions**.
-2. Set the custom domain to `www.leonardovanni.com` (DNS: CNAME record for
-   `www` → `<user>.github.io`, plus apex redirect at the registrar if wanted).
-3. `public/CNAME` is copied into every build, so the custom domain survives
-   deploys.
+`actions/deploy-pages` on every push to `main`.
 
 `astro.config.mjs` sets `site: 'https://www.leonardovanni.com'` (canonical
 URLs, sitemap); `public/robots.txt` points at `/sitemap-index.xml`.
