@@ -8,11 +8,12 @@ import { Content as ThesisBody, frontmatter as thesis } from '../content/pages/t
   PDF into src/assets/thesis/, then uncomment the imports below and the
   <figure> blocks in the template (adjust the filenames to match the
   exported files).
+*/
 
   import { Image } from 'astro:assets';
   import calibration from '../assets/thesis/calibration.png';
   import ellipsoids from '../assets/thesis/ellipsoids.png';
-*/
+
 
 // BibTeX from the Cite block in src/content/pages/thesis-page.md.
 const citation = `@thesis{vanni2026geometric,
@@ -62,7 +63,7 @@ const thesisJsonLd = JSON.stringify({
     <ThesisBody />
   </div>
 
-  {/*
+  {
     Figure slots — uncomment together with the imports in the frontmatter
     once the files exist in src/assets/thesis/:
 
@@ -81,7 +82,7 @@ const thesisJsonLd = JSON.stringify({
         reference camera and aligns with COLMAP's analytical covariance axes.
       </figcaption>
     </figure>
-  */}
+  }
 
   <section class="mt-12 max-w-[72ch]">
     <h2 class="font-heading text-2xl font-semibold">Cite</h2>
