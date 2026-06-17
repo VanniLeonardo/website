@@ -1,19 +1,9 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import { Content as ThesisBody, frontmatter as thesis } from '../content/pages/thesis-page.md';
-
-/*
-  FIGURES — commented <Image> slots, per the FIGURES comment in
-  src/content/pages/thesis-page.md: export the two figures from the thesis
-  PDF into src/assets/thesis/, then uncomment the imports below and the
-  <figure> blocks in the template (adjust the filenames to match the
-  exported files).
-*/
-
-  import { Image } from 'astro:assets';
-  import calibration from '../assets/thesis/calibration.png';
-  import ellipsoids from '../assets/thesis/ellipsoids.png';
-
+import calibration from '../assets/thesis/calibration.png';
+import ellipsoids from '../assets/thesis/ellipsoids.png';
 
 // BibTeX from the Cite block in src/content/pages/thesis-page.md.
 const citation = `@thesis{vanni2026geometric,
@@ -63,26 +53,21 @@ const thesisJsonLd = JSON.stringify({
     <ThesisBody />
   </div>
 
-  {
-    Figure slots — uncomment together with the imports in the frontmatter
-    once the files exist in src/assets/thesis/:
+  <figure class="mt-10 max-w-[72ch]">
+    <Image src={calibration} alt="Calibration plot" class="rounded-lg border border-border" />
+    <figcaption class="mt-2 text-sm text-muted">
+      Temperature scaling (T = 3.33) aligns the empirical Mahalanobis CDF with the theoretical
+      chi-squared ideal.
+    </figcaption>
+  </figure>
 
-    <figure class="mt-10 max-w-[72ch]">
-      <Image src={calibration} alt="Calibration plot" class="rounded-lg border border-border" />
-      <figcaption class="mt-2 text-sm text-muted">
-        Temperature scaling (T = 3.33) aligns the empirical Mahalanobis CDF
-        with the theoretical chi-squared ideal.
-      </figcaption>
-    </figure>
-
-    <figure class="mt-10 max-w-[72ch]">
-      <Image src={ellipsoids} alt="Uncertainty ellipsoid render" class="rounded-lg border border-border" />
-      <figcaption class="mt-2 text-sm text-muted">
-        Predicted translational uncertainty grows with distance from the
-        reference camera and aligns with COLMAP's analytical covariance axes.
-      </figcaption>
-    </figure>
-  }
+  <figure class="mt-10 max-w-[72ch]">
+    <Image src={ellipsoids} alt="Uncertainty ellipsoid render" class="rounded-lg border border-border" />
+    <figcaption class="mt-2 text-sm text-muted">
+      Predicted translational uncertainty grows with distance from the reference camera and aligns
+      with COLMAP's analytical covariance axes.
+    </figcaption>
+  </figure>
 
   <section class="mt-12 max-w-[72ch]">
     <h2 class="font-heading text-2xl font-semibold">Cite</h2>
