@@ -18,18 +18,20 @@ const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
 
   {
     notes.length > 0 && (
-      <ul class="mt-8 grid max-w-[72ch] gap-4">
+      <ul class="mt-10 grid max-w-[68ch] gap-8">
         {notes.map((note) => (
-          <li class="rounded-lg border border-border bg-surface p-5 hover:border-accent">
-            <a href={`/notes/${note.id}/`} class="font-heading text-lg font-semibold">
+          <li class="border-t border-border pt-6">
+            <p class="kicker">
+              <time datetime={note.data.date.toISOString().slice(0, 10)}>
+                {note.data.date.toISOString().slice(0, 10)}
+              </time>
+            </p>
+            <a
+              href={`/notes/${note.id}/`}
+              class="mt-1 block font-heading text-lg font-semibold hover:text-accent"
+            >
               {note.data.title}
             </a>
-            <time
-              datetime={note.data.date.toISOString().slice(0, 10)}
-              class="mt-1 block font-mono text-xs text-muted"
-            >
-              {note.data.date.toISOString().slice(0, 10)}
-            </time>
             <p class="mt-2 text-sm text-muted">{note.data.description}</p>
           </li>
         ))}

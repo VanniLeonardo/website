@@ -1,0 +1,173 @@
+---
+// Hand-drawn inline SVG motifs — one per research project, thin ink lines on
+// paper, sparse accent. Decorative (aria-hidden): each is an abstract diagram
+// of the project's core idea, never a fake screenshot or result.
+//
+//   split       TopoEgo — a Gaussian cluster splits into two rigid SE(3)
+//               branches across a topological cut.
+//   covariance  Thesis — camera trajectory with growing pose-covariance
+//               ellipses, plus a 6×6 covariance-matrix glyph.
+//   grasp       Prosthetic arm — wireframe object, detected 3D box, and a
+//               two-finger gripper closing in.
+//   pointcloud  Fallback for future projects — sparse points, two frusta,
+//               one uncertainty ellipsoid.
+
+interface Props {
+  kind: 'split' | 'covariance' | 'grasp' | 'pointcloud';
+}
+
+const { kind } = Astro.props;
+---
+
+{
+  kind === 'split' && (
+    <svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke-width="1">
+      {/* pre-event: one connected Gaussian cluster */}
+      <g stroke="var(--muted)" opacity="0.75">
+        <ellipse cx="50" cy="78" rx="16" ry="10" transform="rotate(-20 50 78)" />
+        <ellipse cx="66" cy="90" rx="14" ry="9" transform="rotate(15 66 90)" />
+        <ellipse cx="52" cy="98" rx="12" ry="8" transform="rotate(-5 52 98)" />
+        <ellipse cx="68" cy="72" rx="11" ry="7" transform="rotate(30 68 72)" />
+      </g>
+      <g fill="var(--muted)" stroke="none" opacity="0.8">
+        <circle cx="50" cy="78" r="1.4" />
+        <circle cx="66" cy="90" r="1.4" />
+        <circle cx="52" cy="98" r="1.4" />
+        <circle cx="68" cy="72" r="1.4" />
+      </g>
+      {/* topological cut */}
+      <path d="M112 24 132 146" stroke="var(--accent)" stroke-dasharray="5 5" />
+      {/* branch trajectories */}
+      <g stroke="var(--rule)" stroke-dasharray="2 4">
+        <path d="M84 76 Q 120 48 156 50" />
+        <path d="M84 96 Q 120 122 162 118" />
+      </g>
+      {/* post-event: two independent rigid branches */}
+      <g stroke="var(--muted)" opacity="0.75">
+        <ellipse cx="168" cy="48" rx="13" ry="8" transform="rotate(-30 168 48)" />
+        <ellipse cx="184" cy="58" rx="11" ry="7" transform="rotate(-10 184 58)" />
+        <ellipse cx="178" cy="116" rx="14" ry="9" transform="rotate(20 178 116)" />
+        <ellipse cx="194" cy="128" rx="11" ry="7" transform="rotate(40 194 128)" />
+      </g>
+      <g fill="var(--accent)" stroke="none">
+        <circle cx="176" cy="53" r="1.8" />
+        <circle cx="186" cy="122" r="1.8" />
+      </g>
+      {/* per-branch SE(3) motion arrows */}
+      <g stroke="var(--muted)">
+        <path d="M192 40 206 30M206 30 199 31M206 30 205 37" />
+        <path d="M202 138 216 148M216 148 209 147M216 148 215 141" />
+      </g>
+    </svg>
+  )
+}
+
+{
+  kind === 'covariance' && (
+    <svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke-width="1">
+      {/* camera trajectory */}
+      <path d="M28 132 80 110 136 96 196 74" stroke="var(--rule)" stroke-dasharray="2 4" />
+      {/* cameras (dot + frustum wedge) */}
+      <g stroke="var(--muted)">
+        <path d="M28 132 16 112M28 132 38 108M16 112 38 108" />
+        <path d="M80 110 68 90M80 110 90 86M68 90 90 86" />
+        <path d="M136 96 124 76M136 96 146 72M124 76 146 72" />
+        <path d="M196 74 184 54M196 74 206 50M184 54 206 50" />
+      </g>
+      <g fill="var(--muted)" stroke="none">
+        <circle cx="28" cy="132" r="1.8" />
+        <circle cx="80" cy="110" r="1.8" />
+        <circle cx="136" cy="96" r="1.8" />
+      </g>
+      <circle cx="196" cy="74" r="1.8" fill="var(--accent)" stroke="none" />
+      {/* growing pose covariances */}
+      <g stroke="var(--muted)" stroke-dasharray="3 4">
+        <ellipse cx="28" cy="132" rx="7" ry="5" opacity="0.65" />
+        <ellipse cx="80" cy="110" rx="12" ry="8" opacity="0.6" transform="rotate(-12 80 110)" />
+        <ellipse cx="136" cy="96" rx="18" ry="11" opacity="0.55" transform="rotate(-16 136 96)" />
+      </g>
+      <g stroke="var(--accent)" stroke-dasharray="3 4">
+        <ellipse cx="196" cy="74" rx="27" ry="16" transform="rotate(-20 196 74)" />
+        <ellipse cx="196" cy="74" rx="14" ry="8" opacity="0.6" transform="rotate(-20 196 74)" />
+      </g>
+      {/* 6×6 covariance-matrix glyph, diagonal filled */}
+      <g transform="translate(190 14)">
+        <g stroke="var(--border)">
+          {[0, 1, 2, 3, 4, 5, 6].map((i) => (
+            <path d={`M0 ${i * 6} 36 ${i * 6}M${i * 6} 0 ${i * 6} 36`} />
+          ))}
+        </g>
+        <g fill="var(--muted)" stroke="none" opacity="0.7">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <rect x={i * 6 + 1} y={i * 6 + 1} width="4" height="4" />
+          ))}
+        </g>
+      </g>
+    </svg>
+  )
+}
+
+{
+  kind === 'grasp' && (
+    <svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke-width="1">
+      {/* target object: wireframe cube */}
+      <g stroke="var(--muted)">
+        <path d="M96 88 136 88 136 128 96 128Z" />
+        <path d="M96 88 110 76 150 76 136 88M150 76 150 116 136 128" />
+      </g>
+      <path d="M96 128 110 116 150 116M110 76 110 116" stroke="var(--muted)" stroke-dasharray="2 3" opacity="0.5" />
+      {/* detected 3D bounding box */}
+      <g stroke="var(--accent)" stroke-dasharray="4 4" opacity="0.9">
+        <path d="M88 82 158 82 158 134 88 134Z" />
+        <path d="M88 82 100 70 170 70 158 82M170 70 170 122 158 134" />
+      </g>
+      {/* two-finger gripper closing in */}
+      <g stroke="var(--text)" opacity="0.8">
+        <path d="M214 66 Q 178 66 162 84" />
+        <path d="M214 138 Q 178 138 162 120" />
+        <path d="M214 66 Q 224 102 214 138" />
+      </g>
+      <g fill="var(--accent)" stroke="none">
+        <circle cx="162" cy="84" r="2" />
+        <circle cx="162" cy="120" r="2" />
+      </g>
+      {/* camera + observation rays */}
+      <g stroke="var(--muted)">
+        <path d="M26 148 14 130M26 148 38 128M14 130 38 128" />
+      </g>
+      <circle cx="26" cy="148" r="1.8" fill="var(--muted)" stroke="none" />
+      <g stroke="var(--rule)" stroke-dasharray="2 4">
+        <path d="M30 140 96 128M30 140 100 70" />
+      </g>
+    </svg>
+  )
+}
+
+{
+  kind === 'pointcloud' && (
+    <svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke-width="1">
+      <g stroke="var(--muted)" opacity="0.6">
+        <path d="M26 40 70 26M26 40 92 36M26 40 64 60M26 40 86 70M70 26 92 36 86 70 64 60Z" />
+        <path d="M216 146 168 118M216 146 192 110M216 146 174 148M168 118 192 110 174 148Z" />
+      </g>
+      <g stroke="var(--muted)" transform="rotate(-14 126 88)">
+        <ellipse cx="126" cy="88" rx="44" ry="26" opacity="0.4" stroke-dasharray="4 5" />
+        <ellipse cx="126" cy="88" rx="44" ry="9" opacity="0.25" stroke-dasharray="4 5" />
+      </g>
+      <g fill="var(--muted)" stroke="none">
+        <circle cx="106" cy="74" r="1.4" opacity="0.7" />
+        <circle cx="122" cy="66" r="1.4" opacity="0.9" />
+        <circle cx="140" cy="72" r="1.4" opacity="0.6" />
+        <circle cx="104" cy="92" r="1.4" opacity="0.8" />
+        <circle cx="124" cy="86" r="1.4" opacity="0.5" />
+        <circle cx="142" cy="94" r="1.4" opacity="0.8" />
+        <circle cx="112" cy="108" r="1.4" opacity="0.6" />
+        <circle cx="132" cy="104" r="1.4" opacity="0.9" />
+      </g>
+      <g fill="var(--accent)" stroke="none">
+        <circle cx="118" cy="78" r="2" />
+        <circle cx="136" cy="98" r="2" />
+      </g>
+    </svg>
+  )
+}

@@ -3,10 +3,18 @@ import { Image } from 'astro:assets';
 import photo from '../assets/photo.jpg';
 ---
 
-<Image
-  src={photo}
-  alt="Portrait of Leonardo Vanni"
-  width={480}
-  height={480}
-  class="aspect-square w-full rounded-lg border border-border object-cover"
-/>
+{/* Portrait with an offset hairline frame — the one ornament on the page. */}
+<div class="relative">
+  <div
+    class="absolute inset-0 translate-x-2.5 translate-y-2.5 border border-rule"
+    aria-hidden="true"
+  >
+  </div>
+  <Image
+    src={photo}
+    alt="Portrait of Leonardo Vanni"
+    width={480}
+    height={480}
+    class="relative aspect-square w-full border border-border object-cover"
+  />
+</div>

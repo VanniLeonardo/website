@@ -11,13 +11,18 @@ import rehypeKatex from 'rehype-katex';
 export default defineConfig({
   site: 'https://www.leonardovanni.com',
   integrations: [mdx(), sitemap()],
+  // Old routes folded into the simplified nav (static meta-refresh pages).
+  redirects: {
+    '/projects/': '/research/',
+    '/teaching/': '/cv/',
+  },
   markdown: {
     // Build-time math: $...$ / $$...$$ -> KaTeX HTML (CSS imported once in global.css).
     processor: unified({
       remarkPlugins: [remarkMath],
       rehypePlugins: [rehypeKatex],
     }),
-    shikiConfig: { theme: 'github-dark' },
+    shikiConfig: { theme: 'github-light' },
   },
   vite: {
     plugins: [tailwindcss()],

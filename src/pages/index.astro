@@ -1,12 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import ProjectCard from '../components/ProjectCard.astro';
+import ResearchRow from '../components/ResearchRow.astro';
 import NewsItem from '../components/NewsItem.astro';
-import HeroMotif from '../components/HeroMotif.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
-import { Content as HeroIntro, frontmatter as hero } from '../content/pages/hero.md';
+import { Content as HeroCurrently, frontmatter as hero } from '../content/pages/hero.md';
 import { Content as Bio } from '../content/pages/bio.md';
+import { frontmatter as taste } from '../content/pages/taste.md';
 
 interface HeroLink {
   label: string;
@@ -14,11 +14,20 @@ interface HeroLink {
 }
 const heroLinks: HeroLink[] = hero.links ?? [];
 
+interface TasteItem {
+  heading: string;
+  text: string;
+}
+const tasteItems: TasteItem[] = taste.items ?? [];
+
 const featured = (await getCollection('projects', ({ data }) => data.featured && !data.draft))
   .sort((a, b) => a.data.order - b.data.order)
   .slice(0, 3);
 
+// Future-dated items (e.g. graduation) stay hidden until a build on/after
+// their date — never announce something that hasn't happened yet.
 const news = (await getCollection('news'))
+  .filter((item) => item.data.date.valueOf() <= Date.now())
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 4);
 
@@ -37,26 +46,36 @@ const personJsonLd = JSON.stringify({
 ---
 
 <Base
-  title="Leonardo Vanni — 3D Computer Vision & Geometric Learning"
-  description="Leonardo Vanni — researcher in 3D computer vision and geometric learning: 4D Gaussian Splatting for egocentric vision, SE(3)-consistent uncertainty for learned structure-from-motion, real-time vision systems."
+  title="Leonardo Vanni — 3D/4D Computer Vision"
+  description="Leonardo Vanni — researcher in geometry-aware 3D/4D computer vision: topology-aware 4D Gaussian Splatting for egocentric video, SE(3)-consistent uncertainty for 3D foundation models, real-time vision systems."
 >
   <script type="application/ld+json" is:inline slot="head" set:html={personJsonLd} />
 
   {/* Hero */}
-  <section class="grid grid-cols-1 gap-10 md:grid-cols-[1fr_240px] md:gap-14">
+  <section class="grid grid-cols-1 gap-10 md:grid-cols-[1fr_230px] md:gap-16">
     <div class="order-2 md:order-1">
-      <h1 class="font-heading text-4xl font-semibold sm:text-5xl">{hero.name}</h1>
-      <p class="mt-3 font-mono text-sm tracking-wide text-accent">{hero.subtitle}</p>
-      <div class="prose mt-5">
-        <HeroIntro />
+      <h1 class="font-heading text-[2rem] font-semibold tracking-tight sm:text-4xl">
+        {hero.name}
+      </h1>
+      <p class="kicker mt-3">{hero.status}</p>
+
+      <p
+        class="mt-7 max-w-[24ch] font-heading text-[1.6rem] leading-[1.25] font-medium text-balance sm:text-[1.9rem]"
+      >
+        {hero.statement}
+      </p>
+
+      <div class="prose mt-5 text-[0.95rem] text-muted">
+        <HeroCurrently />
       </div>
+
       <ul class="mt-6 flex flex-wrap gap-x-5 gap-y-1">
         {
           heroLinks.map((link) => (
             <li>
               <a
                 href={link.url}
-                class="text-sm text-accent underline underline-offset-2 hover:text-text"
+                class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
               >
                 {link.label}
               </a>
@@ -64,35 +83,55 @@ const personJsonLd = JSON.stringify({
           ))
         }
       </ul>
+
+      {hero.seeking && <p class="mt-5 text-sm text-muted">{hero.seeking}</p>}
     </div>
-    <div class="order-1 mx-auto w-44 sm:w-52 md:order-2 md:mx-0 md:w-full">
+    <div class="order-1 mx-auto w-44 sm:w-52 md:order-2 md:mx-0 md:mt-2 md:w-full">
       <PhotoPlaceholder />
-      {/* Quiet aside under the portrait on wide screens */}
-      <div class="mt-6 hidden opacity-60 md:block">
-        <HeroMotif />
-      </div>
     </div>
   </section>
 
-  {/* Selected work */}
-  <section class="mt-16">
-    <h2 class="font-heading text-2xl font-semibold">Selected work</h2>
-    <div class="mt-6 grid gap-5">
-      {featured.map((project) => <ProjectCard project={project} />)}
+  {/* Selected research */}
+  <section class="mt-20">
+    <h2 class="kicker">Selected research</h2>
+    <div class="mt-5 grid gap-10">
+      {featured.map((project) => <ResearchRow project={project} />)}
+    </div>
+    <p class="mt-8 text-sm">
+      <a
+        href="/research/"
+        class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
+        >Full research page →</a
+      >
+    </p>
+  </section>
+
+  {/* Research taste */}
+  <section class="mt-20 border-t border-border pt-8">
+    <h2 class="kicker">What I care about</h2>
+    <div class="mt-6 grid gap-8 sm:grid-cols-3">
+      {
+        tasteItems.map((item) => (
+          <div>
+            <h3 class="font-heading text-base font-semibold">{item.heading}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-muted">{item.text}</p>
+          </div>
+        ))
+      }
     </div>
   </section>
 
   {/* Short bio */}
-  <section class="mt-16">
-    <h2 class="font-heading text-2xl font-semibold">About</h2>
+  <section class="mt-20 border-t border-border pt-8">
+    <h2 class="kicker">About</h2>
     <div class="prose mt-4">
       <Bio />
     </div>
   </section>
 
   {/* News */}
-  <section class="mt-16">
-    <h2 class="font-heading text-2xl font-semibold">News</h2>
+  <section class="mt-20 border-t border-border pt-8">
+    <h2 class="kicker">News</h2>
     <ul class="mt-5 grid gap-3">
       {news.map((item) => <NewsItem date={item.data.date} text={item.data.text} />)}
     </ul>

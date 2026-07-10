@@ -32,21 +32,24 @@
     format('woff2');
 }
 
-/* Design tokens */
+/* Design tokens — warm-paper editorial.
+   All text/muted/accent pairs pass WCAG AA (≥ 4.5:1) on --bg and --surface. */
 :root {
-  --bg: #0a0f1c;
-  --surface: #101725;
-  --border: #1e2a3d;
-  --text: #e6eaf2;
-  --muted: #94a3b8;
-  --accent: #7aa7e8;
-  --status-public: #7bc4a2;
+  --bg: #f6f3ec;
+  --surface: #efebe0;
+  --border: #ddd6c4;
+  --rule: #b8ae95;
+  --text: #1e1b16;
+  --muted: #5f584a;
+  --accent: #96431c;
+  --status-public: #3f6b4f;
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-border: var(--border);
+  --color-rule: var(--rule);
   --color-text: var(--text);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
@@ -75,11 +78,11 @@
   h6 {
     font-family: var(--font-heading);
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
   }
 
   ::selection {
-    background-color: color-mix(in srgb, var(--accent) 30%, transparent);
+    background-color: color-mix(in srgb, var(--accent) 22%, transparent);
   }
 
   /* Nothing on the site moves, but respect the preference regardless. */
@@ -94,9 +97,18 @@
   }
 }
 
+/* Mono uppercase section kicker — the recurring editorial label. */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 /* Long-form markdown bodies */
 .prose {
-  max-width: 72ch;
+  max-width: 68ch;
 }
 
 .prose p {
@@ -106,11 +118,13 @@
 .prose a {
   color: var(--accent);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  text-underline-offset: 3px;
 }
 
 .prose a:hover {
   color: var(--text);
+  text-decoration-color: var(--text);
 }
 
 .prose strong {
@@ -121,13 +135,13 @@
 .prose h2 {
   margin-top: 2em;
   margin-bottom: 0.5em;
-  font-size: 1.4rem;
+  font-size: 1.35rem;
 }
 
 .prose h3 {
   margin-top: 1.6em;
   margin-bottom: 0.5em;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
 }
 
 .prose ul,
@@ -150,7 +164,7 @@
 
 .prose blockquote {
   margin-block: 1.25em;
-  border-inline-start: 2px solid var(--border);
+  border-inline-start: 2px solid var(--rule);
   padding-inline-start: 1em;
   color: var(--muted);
 }
@@ -167,7 +181,7 @@
 
 .prose :not(pre) > code {
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: 3px;
   background-color: var(--surface);
   padding: 0.1em 0.35em;
 }
@@ -176,7 +190,7 @@
   margin-block: 1.25em;
   overflow-x: auto;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 1rem;
   font-size: 0.85rem;
   line-height: 1.6;

@@ -1,9 +1,15 @@
 ---
+import fs from 'node:fs';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import { Content as ThesisBody, frontmatter as thesis } from '../content/pages/thesis-page.md';
 import calibration from '../assets/thesis/calibration.png';
 import ellipsoids from '../assets/thesis/ellipsoids.png';
+
+// The PDF is owner-supplied (acknowledgements-free) into public/thesis/.
+// The download button only renders once the file actually exists — no broken
+// links, no placeholder PDFs; it appears automatically on the next build.
+const pdfExists = fs.existsSync(new URL(`../../public${thesis.pdf}`, import.meta.url));
 
 // BibTeX from the Cite block in src/content/pages/thesis-page.md.
 const citation = `@thesis{vanni2026geometric,
@@ -37,16 +43,27 @@ const thesisJsonLd = JSON.stringify({
   <script type="application/ld+json" is:inline slot="head" set:html={thesisJsonLd} />
 
   <header class="max-w-[72ch]">
-    <h1 class="font-heading text-3xl font-semibold text-balance">{thesis.title}</h1>
-    <p class="mt-4 font-mono text-xs tracking-wide text-muted">
+    <p class="kicker">
       {thesis.kind} · {thesis.institution} · {thesis.year} · Supervisor: {thesis.supervisor}
     </p>
-    <a
-      href={thesis.pdf}
-      class="mt-6 inline-block rounded-lg bg-accent px-5 py-2.5 font-medium text-bg hover:bg-text"
-    >
-      Download thesis (PDF)
-    </a>
+    <h1 class="mt-3 font-heading text-3xl font-semibold text-balance">{thesis.title}</h1>
+    {
+      pdfExists ? (
+        <a
+          href={thesis.pdf}
+          class="mt-6 inline-block bg-accent px-5 py-2.5 font-medium text-bg hover:bg-text"
+        >
+          Download thesis (PDF)
+        </a>
+      ) : (
+        <p class="mt-6 text-sm text-muted italic">
+          PDF coming online soon — <a
+            href="mailto:info@leonardovanni.com"
+            class="underline underline-offset-3 hover:text-text">email me</a
+          > for a copy in the meantime.
+        </p>
+      )
+    }
   </header>
 
   <div class="prose mt-10">
@@ -54,7 +71,7 @@ const thesisJsonLd = JSON.stringify({
   </div>
 
   <figure class="mt-10 max-w-[72ch]">
-    <Image src={calibration} alt="Calibration plot" class="rounded-lg border border-border" />
+    <Image src={calibration} alt="Calibration plot" class="border border-border" />
     <figcaption class="mt-2 text-sm text-muted">
       Temperature scaling (T = 3.33) aligns the empirical Mahalanobis CDF with the theoretical
       chi-squared ideal.
@@ -62,7 +79,7 @@ const thesisJsonLd = JSON.stringify({
   </figure>
 
   <figure class="mt-10 max-w-[72ch]">
-    <Image src={ellipsoids} alt="Uncertainty ellipsoid render" class="rounded-lg border border-border" />
+    <Image src={ellipsoids} alt="Uncertainty ellipsoid render" class="border border-border" />
     <figcaption class="mt-2 text-sm text-muted">
       Predicted translational uncertainty grows with distance from the reference camera and aligns
       with COLMAP's analytical covariance axes.
@@ -70,8 +87,8 @@ const thesisJsonLd = JSON.stringify({
   </figure>
 
   <section class="mt-12 max-w-[72ch]">
-    <h2 class="font-heading text-2xl font-semibold">Cite</h2>
+    <h2 class="kicker">Cite</h2>
     <pre
-      class="mt-4 overflow-x-auto rounded-lg border border-border bg-surface p-4 font-mono text-[0.8rem] leading-relaxed"><code>{citation}</code></pre>
+      class="mt-4 overflow-x-auto border border-border bg-surface p-4 font-mono text-[0.8rem] leading-relaxed"><code>{citation}</code></pre>
   </section>
 </Base>

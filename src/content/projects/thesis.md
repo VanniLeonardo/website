@@ -1,6 +1,12 @@
 ---
 title: "Geometrically-Grounded Uncertainty Quantification for Foundational 3D Vision Models"
-oneLiner: "Extending the VGGT 3D foundation model with SE(3)-consistent uncertainty estimation for learned structure-from-motion."
+shortTitle: "SE(3) Uncertainty for VGGT"
+hook: "A 3D foundation model that knows when it's wrong."
+oneLiner: >
+  Extends VGGT with a decoupled branch predicting full 6×6 camera-pose
+  covariances on the SE(3) manifold. The uncertainty calibrates with a single
+  temperature, structurally matches Bundle-Adjustment covariances, and spikes
+  exactly on mislocalized frames — a built-in failure detector.
 abstract: >
   Foundational 3D models such as VGGT regress camera poses deterministically,
   with no measure of confidence — which makes them unusable wherever
@@ -27,12 +33,30 @@ period: "2026"
 links:
   - label: "Thesis page"
     url: "/thesis/"
-  - label: "Thesis (PDF)"
-    url: "/thesis/vanni-2026-bsc-thesis.pdf"
 featured: true
 order: 2
 ---
 
-<!-- The PDF is the acknowledgements-free version, supplied by Leonardo into
-     public/thesis/. Do not commit a placeholder PDF. A code link is added only
-     when a cleaned public repo exists (future phase). -->
+<!-- The direct PDF link lives only on /thesis/, where it is rendered
+     conditionally: the button appears once the owner-supplied PDF exists at
+     public/thesis/vanni-2026-bsc-thesis.pdf. Do not commit a placeholder PDF.
+     A code link is added only when a cleaned public repo exists. -->
+
+**Problem.** Feed-forward 3D foundation models made reconstruction fast and
+robust, but they answer with a single deterministic guess. Downstream systems —
+sensor fusion, active vision, robotics — need to know *how much* to trust each
+pose, not just what it is.
+
+**Idea.** Keep VGGT's state-of-the-art mean prediction frozen, and train a
+parallel lightweight branch to predict a full $6 \times 6$ covariance over
+each camera pose, formulated properly on $\mathrm{SE}(3)$: body-centric
+perturbations on the Lie algebra, a left-invariant metric that reconciles
+meters with radians, and a scale-aware negative log-likelihood with a
+curriculum that prevents degenerate collapse.
+
+**Why it matters.** On CO3D the learned covariances calibrate with a single
+temperature and structurally match the analytical covariances of classical
+Bundle Adjustment; on EPIC-KITCHENS the predicted variance spikes exactly on
+mislocalized frames. That turns a black-box reconstructor into a component you
+can put inside a probabilistic pipeline — and gives it a failure detector for
+free.

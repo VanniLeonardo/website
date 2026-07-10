@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { Content as CvBody, frontmatter } from '../content/pages/cv-page.md';
+import { Content as Teaching } from '../content/pages/teaching.md';
 ---
 
 <Base title="CV — Leonardo Vanni" description={frontmatter.description}>
@@ -8,7 +9,7 @@ import { Content as CvBody, frontmatter } from '../content/pages/cv-page.md';
 
   <a
     href={frontmatter.pdf}
-    class="mt-6 inline-block rounded-lg bg-accent px-5 py-2.5 font-medium text-bg hover:bg-text"
+    class="mt-6 inline-block bg-accent px-5 py-2.5 font-medium text-bg hover:bg-text"
   >
     Download CV (PDF)
   </a>
@@ -18,20 +19,22 @@ import { Content as CvBody, frontmatter } from '../content/pages/cv-page.md';
     <li>
       <a
         href="mailto:info@leonardovanni.com"
-        class="text-sm text-accent underline underline-offset-2 hover:text-text"
+        class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
         >info@leonardovanni.com</a
       >
     </li>
     <li>
       <a
         href="https://www.linkedin.com/in/leonardo-vanni/"
-        class="text-sm text-accent underline underline-offset-2 hover:text-text">LinkedIn</a
+        class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
+        >LinkedIn</a
       >
     </li>
     <li>
       <a
         href="https://github.com/VanniLeonardo"
-        class="text-sm text-accent underline underline-offset-2 hover:text-text">GitHub</a
+        class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
+        >GitHub</a
       >
     </li>
   </ul>
@@ -39,4 +42,12 @@ import { Content as CvBody, frontmatter } from '../content/pages/cv-page.md';
   <div class="prose mt-8">
     <CvBody />
   </div>
+
+  {/* Teaching & leadership live on the CV page — /teaching/ redirects here. */}
+  <section class="mt-12 max-w-[68ch] border-t border-border pt-8">
+    <h2 class="kicker">Teaching & Leadership</h2>
+    <div class="prose mt-2">
+      <Teaching />
+    </div>
+  </section>
 </Base>

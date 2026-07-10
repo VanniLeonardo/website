@@ -1,11 +1,34 @@
 ---
+import { getCollection, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import { Content as Research, frontmatter } from '../content/pages/research.md';
+import ResearchRow from '../components/ResearchRow.astro';
+import { Content as ResearchIntro, frontmatter } from '../content/pages/research.md';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+// Project bodies (problem / idea / why it matters) render inside each row.
+const rendered = await Promise.all(
+  projects.map(async (project) => ({ project, Content: (await render(project)).Content })),
+);
 ---
 
 <Base title="Research — Leonardo Vanni" description={frontmatter.description}>
   <h1 class="font-heading text-3xl font-semibold">{frontmatter.title}</h1>
-  <div class="prose mt-6">
-    <Research />
+  <div class="prose mt-6 text-muted">
+    <ResearchIntro />
+  </div>
+
+  <div class="mt-12 grid gap-12">
+    {
+      rendered.map(({ project, Content }) => (
+        <ResearchRow project={project} detailed>
+          <div class="prose mt-1 text-[0.95rem]">
+            <Content />
+          </div>
+        </ResearchRow>
+      ))
+    }
   </div>
 </Base>

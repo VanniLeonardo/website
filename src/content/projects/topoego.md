@@ -1,6 +1,13 @@
 ---
-title: "TopoEgo: Topological-Aware 4D Gaussian Splatting for Egocentric Vision"
-oneLiner: "4D Gaussian Splatting for egocentric video where objects are cut, split, fractured, and taken apart."
+title: "TopoEgo: Topology-Aware 4D Gaussian Splatting for Egocentric Vision"
+shortTitle: "TopoEgo"
+hook: "Objects get cut. Most 4D methods pretend they don't."
+oneLiner: >
+  A piece-wise rigid kinematic tracker for 4D Gaussian Splatting: at
+  topological events, canonical Gaussians split into independent SE(3)
+  branches instead of being smeared by a continuous deformation field.
+  Comes with a benchmark of cut/open/break interactions curated from
+  EPIC-KITCHENS and Ego4D.
 abstract: >
   Current 4D Gaussian Splatting methods assume scene topology never changes: a
   connected object must remain connected. Egocentric video violates this

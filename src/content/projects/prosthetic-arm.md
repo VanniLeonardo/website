@@ -1,6 +1,12 @@
 ---
 title: "Intelligent Prosthetic Arm — Real-Time Vision for Grasp Validation"
-oneLiner: "Real-time computer-vision pipeline for grasp validation in an EEG-controlled intelligent prosthetic arm."
+shortTitle: "Prosthetic Arm Vision"
+hook: "Real-time vision for a hand that can't afford to guess."
+oneLiner: >
+  A live pipeline — detection, monocular depth, segmentation, hand tracking,
+  Kalman-filtered 3D state — feeding a hybrid model that validates grasp
+  feasibility from 3D object geometry and user hand pose, for an
+  EEG-controlled prosthetic arm.
 abstract: >
   A collaboration between BAINSA (Bocconi AI & Neuroscience Association) and
   Politecnico di Milano to build an intelligent prosthetic arm combining
@@ -29,3 +35,17 @@ links:
 featured: true
 order: 3
 ---
+
+**Problem.** An EEG-controlled prosthetic hand gets a noisy, low-bandwidth
+intent signal from the user. Before it closes around an object, something has
+to check — in real time, from a single camera — whether the grasp is actually
+feasible.
+
+**Idea.** Fuse object detection, monocular depth, segmentation, and hand-pose
+tracking into Kalman-filtered 3D state for both the hand and the target, then
+validate the intended grasp with a hybrid model that reasons about 3D object
+geometry and hand pose together.
+
+**Why it matters.** Grasp validation is the safety layer between "the user
+thought about grasping" and "the motors move." The pipeline runs live, ships
+with a GUI demo and a Docker setup, and the report is public.

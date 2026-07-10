@@ -1,0 +1,99 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Motif from './Motif.astro';
+import StatusBadge from './StatusBadge.astro';
+
+// Editorial research row: motif · kicker · hook · contribution · meta · links.
+// Compact form (homepage) links its heading to the anchor on /research/;
+// detailed form (/research/) renders the full title, the abstract, and the
+// project body (problem / idea / why) through the default slot.
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  detailed?: boolean;
+}
+
+const { project, detailed = false } = Astro.props;
+const { title, shortTitle, hook, oneLiner, abstract, role, collaborators, status, period, links, comingSoon } =
+  project.data;
+
+const motifKinds = {
+  topoego: 'split',
+  thesis: 'covariance',
+  'prosthetic-arm': 'grasp',
+} as const;
+const kind = motifKinds[project.id as keyof typeof motifKinds] ?? 'pointcloud';
+
+// Links whose URL contains "[PLACEHOLDER" stay in the content file but are
+// never rendered.
+const visibleLinks = (links ?? []).filter((link) => !link.url.includes('[PLACEHOLDER'));
+
+// Detailed rows show the body (problem / idea / why) when the project has
+// one, and fall back to the abstract when it doesn't (e.g. TopoEgo, whose
+// body is withheld until release). HTML comments don't count as content.
+const hasBody = Boolean(project.body?.replace(/<!--[\s\S]*?-->/g, '').trim());
+---
+
+<article
+  id={detailed ? project.id : undefined}
+  class="grid scroll-mt-8 gap-x-10 gap-y-5 border-t border-border pt-8 sm:grid-cols-[9.5rem_1fr] md:grid-cols-[11rem_1fr]"
+>
+  <div class="max-w-[11rem] text-text sm:pt-1">
+    <Motif kind={kind} />
+  </div>
+
+  <div class="max-w-[62ch]">
+    <p class="kicker flex flex-wrap items-baseline gap-x-2">
+      <span>{shortTitle ?? title}</span>
+      <span aria-hidden="true">·</span>
+      <StatusBadge status={status} />
+      <span aria-hidden="true">·</span>
+      <span>{period}</span>
+    </p>
+
+    {
+      detailed ? (
+        <h2 class="mt-2 font-heading text-xl font-semibold text-balance sm:text-2xl">{title}</h2>
+      ) : (
+        <h3 class="mt-2 font-heading text-xl font-semibold text-balance sm:text-2xl">
+          <a href={`/research/#${project.id}`} class="hover:text-accent">
+            {hook}
+          </a>
+        </h3>
+      )
+    }
+
+    {detailed && <p class="mt-3 font-heading text-lg font-medium text-balance">{hook}</p>}
+
+    {/* Compact: the 1–2 sentence contribution. Detailed: body or abstract — never both, no repetition. */}
+    {!detailed && <p class="mt-3 text-[0.95rem] leading-relaxed">{oneLiner.trim()}</p>}
+
+    {detailed && !hasBody && <p class="mt-3 text-[0.95rem] leading-relaxed">{abstract.trim()}</p>}
+
+    {detailed && hasBody && <slot />}
+
+    <p class="mt-4 text-sm text-muted">
+      {role}{collaborators && <> — {collaborators}</>}
+    </p>
+
+    {/* Links row OR the muted comingSoon line — never both. */}
+    {
+      visibleLinks.length > 0 ? (
+        <ul class="mt-3 flex flex-wrap gap-x-5 gap-y-1">
+          {visibleLinks.map((link) => (
+            <li>
+              <a
+                href={link.url}
+                class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : comingSoon ? (
+        <p class="mt-3 text-sm text-muted italic">{comingSoon}</p>
+      ) : null
+    }
+  </div>
+</article>

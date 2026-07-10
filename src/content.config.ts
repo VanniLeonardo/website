@@ -6,6 +6,11 @@ const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
     title: z.string(),
+    // Short display title for homepage rows and anchors (e.g. "TopoEgo").
+    shortTitle: z.string().optional(),
+    // One sharp sentence that earns attention (homepage + research rows).
+    hook: z.string(),
+    // 1–2 sentence contribution summary, plain language.
     oneLiner: z.string(),
     abstract: z.string(),
     tags: z.array(z.string()),

@@ -37,12 +37,12 @@ const inter = await toTtf(
   'inter-400.ttf',
 );
 
-// Dark navy --bg, name in Space Grotesk, subtitle, one thin accent line.
+// Warm paper --bg, name in Space Grotesk, subtitle, one thin rust rule.
 const svg = `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="630" fill="#0A0F1C"/>
-  <text x="96" y="318" font-family="Space Grotesk" font-weight="600" font-size="86" fill="#E6EAF2">Leonardo Vanni</text>
-  <line x1="98" y1="362" x2="568" y2="362" stroke="#7AA7E8" stroke-width="3"/>
-  <text x="96" y="432" font-family="Inter" font-size="34" fill="#94A3B8">3D Computer Vision · Geometric Learning</text>
+  <rect width="1200" height="630" fill="#F6F3EC"/>
+  <text x="96" y="318" font-family="Space Grotesk" font-weight="600" font-size="86" fill="#1E1B16">Leonardo Vanni</text>
+  <line x1="98" y1="362" x2="568" y2="362" stroke="#96431C" stroke-width="3"/>
+  <text x="96" y="432" font-family="Inter" font-size="34" fill="#5F584A">3D/4D computer vision — for scenes that move, break, and change</text>
 </svg>`;
 
 const resvg = new Resvg(svg, {
