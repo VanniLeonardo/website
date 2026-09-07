@@ -1,45 +1,147 @@
 ---
 import Base from '../layouts/Base.astro';
-import { Content as CvBody, frontmatter } from '../content/pages/cv-page.md';
+import ExperienceEntry from '../components/ExperienceEntry.astro';
+import { frontmatter } from '../content/pages/cv-page.md';
+import { frontmatter as background } from '../content/pages/background.md';
+import { frontmatter as experience } from '../content/pages/experience.md';
+
+interface Download {
+  label: string;
+  detail: string;
+  url: string;
+  weight?: 'primary' | 'secondary';
+}
+
+interface BackgroundEntry {
+  institution: string;
+  qualification: string;
+  period: string;
+  note: string;
+}
+
+interface ExperienceItem {
+  role: string;
+  organization: string;
+  period: string;
+  featured?: boolean;
+}
+
+interface ToolGroup {
+  group: string;
+  items: string;
+}
+
+const downloads: Download[] = frontmatter.downloads ?? [];
+const education: BackgroundEntry[] = background.entries ?? [];
+const roles: ExperienceItem[] = (experience.entries ?? []).filter(
+  (entry: ExperienceItem) => entry.featured,
+);
+const researchAreas: string[] = frontmatter.researchAreas ?? [];
+const tools: ToolGroup[] = frontmatter.tools ?? [];
 ---
 
 <Base title="CV — Leonardo Vanni" description={frontmatter.description}>
   <h1 class="font-heading text-3xl font-semibold">{frontmatter.title}</h1>
 
-  <a
-    href={frontmatter.pdf}
-    class="mt-6 inline-block bg-accent px-5 py-2.5 font-medium text-bg hover:bg-text"
-  >
-    Download CV (PDF)
-  </a>
-
-  {/* Contact: email / LinkedIn / GitHub only — never a phone number. */}
-  <ul class="mt-6 flex flex-wrap gap-x-5 gap-y-1">
-    <li>
-      <a
-        href="mailto:info@leonardovanni.com"
-        class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
-        >info@leonardovanni.com</a
-      >
-    </li>
-    <li>
-      <a
-        href="https://www.linkedin.com/in/leonardo-vanni/"
-        class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
-        >LinkedIn</a
-      >
-    </li>
-    <li>
-      <a
-        href="https://github.com/VanniLeonardo"
-        class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
-        >GitHub</a
-      >
-    </li>
-  </ul>
-
-  <div class="prose mt-8">
-    <CvBody />
+  {/* Downloads: research CV leads, the one-page resume follows. */}
+  <div class="mt-7 flex flex-col gap-4 sm:flex-row sm:items-start">
+    {
+      downloads.map((download) => (
+        <div class="max-w-[30ch]">
+          <a
+            href={download.url}
+            class:list={[
+              'inline-block px-5 py-2.5 font-medium',
+              download.weight === 'primary'
+                ? 'bg-accent text-bg hover:bg-text'
+                : 'border border-border text-text hover:border-accent hover:text-accent',
+            ]}
+          >
+            {download.label}
+          </a>
+          <p class="mt-2 text-sm text-muted">{download.detail}</p>
+        </div>
+      ))
+    }
   </div>
 
+  <section class="mt-14 border-t border-border pt-8">
+    <h2 class="kicker">Education</h2>
+    <ul class="mt-5 grid max-w-[68ch] gap-5">
+      {
+        education.map((entry) => (
+          <li>
+            <p class="kicker">{entry.period}</p>
+            <p class="mt-1 font-heading text-base font-semibold">{entry.institution}</p>
+            <p class="mt-0.5 text-[0.95rem] text-muted">
+              {entry.qualification} — {entry.note}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="mt-14 border-t border-border pt-8">
+    <h2 class="kicker">Research areas</h2>
+    <p class="mt-4 max-w-[68ch] text-[0.95rem] leading-relaxed text-muted">
+      {researchAreas.join(' · ')}
+    </p>
+  </section>
+
+  <section class="mt-14 border-t border-border pt-8">
+    <h2 class="kicker">Selected experience</h2>
+    <div class="mt-5 grid gap-5">
+      {roles.map((role) => <ExperienceEntry {...role} compact />)}
+    </div>
+    <p class="mt-8 text-sm">
+      <a
+        href="/experience/"
+        class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
+        >Full experience page →</a
+      >
+    </p>
+  </section>
+
+  <section class="mt-14 border-t border-border pt-8">
+    <h2 class="kicker">Technical tools</h2>
+    <dl class="mt-4 grid max-w-[68ch] gap-3">
+      {
+        tools.map((tool) => (
+          <div>
+            <dt class="font-heading text-base font-semibold">{tool.group}</dt>
+            <dd class="mt-0.5 text-[0.95rem] text-muted">{tool.items}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="mt-14 border-t border-border pt-8">
+    <h2 class="kicker">Languages</h2>
+    <p class="mt-4 text-[0.95rem] text-muted">{frontmatter.languages}</p>
+  </section>
+
+  {/* Contact: email / LinkedIn / GitHub only — never a phone number. */}
+  <section class="mt-14 border-t border-border pt-8">
+    <h2 class="kicker">Contact</h2>
+    <ul class="mt-4 flex flex-wrap gap-x-5 gap-y-1">
+      {
+        [
+          { label: 'info@leonardovanni.com', url: 'mailto:info@leonardovanni.com' },
+          { label: 'LinkedIn', url: 'https://www.linkedin.com/in/leonardo-vanni/' },
+          { label: 'GitHub', url: 'https://github.com/VanniLeonardo' },
+        ].map((link) => (
+          <li>
+            <a
+              href={link.url}
+              class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 </Base>
