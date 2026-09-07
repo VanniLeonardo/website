@@ -5,7 +5,7 @@ import ResearchRow from '../components/ResearchRow.astro';
 import NewsItem from '../components/NewsItem.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
 import { Content as HeroCurrently, frontmatter as hero } from '../content/pages/hero.md';
-import { Content as Bio, frontmatter as bio } from '../content/pages/bio.md';
+import { Content as Bio } from '../content/pages/bio.md';
 import { frontmatter as background } from '../content/pages/background.md';
 import { frontmatter as experience } from '../content/pages/experience.md';
 import ExperienceEntry from '../components/ExperienceEntry.astro';
@@ -39,7 +39,6 @@ const roles: ExperienceItem[] = (experience.entries ?? []).filter(
 
 // Wording that depends on whether the TUM programme has started.
 const status = byTumStart(hero.status, hero.statusFrom);
-const bioLead = byTumStart(bio.lead, bio.leadFrom);
 
 const featured = (await getCollection('projects', ({ data }) => data.featured && !data.draft))
   .sort((a, b) => a.data.order - b.data.order)
@@ -204,7 +203,6 @@ const personJsonLd = JSON.stringify({
   <section class="mt-20 border-t border-border pt-8">
     <h2 class="kicker">About</h2>
     <div class="prose mt-4">
-      <p>{bioLead}</p>
       <Bio />
     </div>
   </section>

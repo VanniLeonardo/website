@@ -19,15 +19,18 @@ latin subset only — no CDN or third-party requests anywhere.
 | `npm run preview` | Preview the production build                      |
 | `npm run check`   | Type-check (`astro check`)                        |
 | `npm run og`      | Regenerate `public/og-default.png` from the fonts |
+| `npm run motifs`  | Regenerate the research motifs (see `scripts/motifs/`) |
 
 Requires Node ≥ 22.12 (Astro 6).
 
 ## Site structure
 
-Nav is deliberately small: Research · CV · Notes · Contact (+ `/thesis/`,
-linked from Research, the homepage, and news). `/projects/` and `/teaching/`
-are static redirects (see `astro.config.mjs`) — projects merged into
-`/research/`, teaching & leadership onto `/cv/`.
+Nav is deliberately small: Research · Experience · CV · Contact, plus
+`/thesis/`, linked from Research, the homepage, and news. `/notes/` builds but
+stays out of the nav until a note exists: an empty section is never
+advertised. `/projects/` and `/teaching/` are static redirects (see
+`astro.config.mjs`); projects merged into `/research/`, teaching and
+leadership onto `/experience/`.
 
 ## Owner-supplied assets (never commit placeholders)
 
@@ -37,22 +40,32 @@ Still missing:
   removed. The "Download thesis (PDF)" button on `/thesis/` renders only once
   this file exists (build-time `fs.existsSync` check in
   `src/pages/thesis.astro`); until then the page shows an "email me" line.
-- Google Scholar / ORCID links — placeholders in
-  `src/content/pages/contact.md`, add after first indexed publication.
-- Real project media (thumbnails/videos) — until then, each research row uses
-  a hand-drawn SVG motif from `src/components/Motif.astro` (one per project;
-  abstract diagrams, never fake screenshots).
+Google Scholar and ORCID links in `src/content/pages/contact.md` are live and
+verified, and both appear in the homepage JSON-LD `sameAs`.
+
+Research rows carry a generated motif from `src/components/Motif.astro`, built
+from real 3D geometry by `scripts/motifs/` (never a fake screenshot). The
+prosthetic-arm entry also carries a real demo frame from the project's own
+public media.
 
 ## Editing content
 
 ### Homepage copy
 
-- `src/content/pages/hero.md` — name, mono status line, the display
-  `statement`, the `seeking` line (delete once a position is secured), links,
-  and the "Currently:" body paragraph.
-- `src/content/pages/taste.md` — the three "What I care about" items.
-- `src/content/pages/bio.md` — the About paragraph (has dated TODO comments:
-  graduation wording, TUM announcement).
+- `src/content/pages/hero.md` — name, mono status line (two variants, see
+  below), the display `statement`, the `seeking` line (delete once a position
+  is secured), and the links with their `weight` for the call-to-action
+  hierarchy.
+- `src/content/pages/bio.md` — the About paragraph.
+- `src/content/pages/background.md` — the education entries, used by the
+  homepage and the CV page.
+- `src/content/pages/experience.md` — roles and the teaching block, used by
+  `/experience/`, the homepage, and the CV page.
+
+Wording that depends on the TUM start date is resolved at build time by
+`src/lib/dates.ts`: a rebuild on or after 2026-10-01 switches "Incoming M.Sc."
+to the present tense, in the hero and in the JSON-LD. There is no comment to
+remember to action.
 
 ### Add a project
 
@@ -101,33 +114,19 @@ warning "No files found matching \*\*/\*.mdx" is harmless and disappears with
 the first note). When the first note goes live, revisit the intro sentence in
 `src/content/pages/notes-index.md` ("Nothing here yet.").
 
-## Graduation checklist (July 21, 2026)
-
-1. `src/content/news/2026-06-graduation.md` — verify date/text/grade; it
-   renders automatically on the first build after the date.
-2. `src/content/pages/bio.md` — follow the AFTER GRADUATION comment
-   ("completing" → "graduated ... 110 cum laude").
-
-## TUM announcement checklist (do NOT edit before it is public)
-
-TUM must not appear as Leonardo's own destination until publicly announced.
-On announcement day, search the codebase for `AFTER TUM` and follow each
-comment:
-
-1. `src/content/pages/bio.md` — insert the TUM clause after the Polytechnique
-   clause as the comment specifies.
-2. `src/content/pages/cv-page.md` — add the TUM entry where the comment marks
-   it (also update the CV PDF itself).
-3. Off-site (handoff `extras/`, not in this repo): GitHub profile README and
-   LinkedIn headline/About.
-
 ## Deployment (GitHub Pages)
 
 `.github/workflows/deploy.yml` builds with `withastro/action` and deploys via
 `actions/deploy-pages` on every push to `main`.
 
-`astro.config.mjs` sets `site: 'https://www.leonardovanni.com'` (canonical
-URLs, sitemap); `public/robots.txt` points at `/sitemap-index.xml`.
+`astro.config.mjs` sets `site: 'https://leonardovanni.com'`, the apex domain,
+which drives canonical URLs, `og:url` and the sitemap. `www` 301-redirects to
+the apex, so the apex is the one canonical host.
+
+`public/CNAME` must hold the apex domain too: GitHub Pages reads it on every
+deploy and it decides the redirect direction. If it is set to `www`, the
+redirect reverses and every canonical URL on the site points at a host that
+redirects away.
 
 ## Notes for maintainers
 
@@ -135,8 +134,12 @@ URLs, sitemap); `public/robots.txt` points at `/sitemap-index.xml`.
   `--border`, `--rule`, `--text`, `--muted`, `--accent`,
   `--status-public`). All text-on-background pairs were checked at ≥ 4.5:1
   (WCAG AA); re-check if you change them.
-- No animations, no analytics, no client frameworks, no contact forms — by
-  design. Hover feedback is a color change only.
+- No animations, no analytics, no client frameworks, no contact forms, by
+  design. Hover feedback is a colour change only.
+- The research motifs are static SVG generated ahead of time, so they cost
+  nothing at runtime: no WebGL and no client JavaScript. Regenerating them
+  needs Python (`scripts/motifs/requirements.txt`); building the site does
+  not.
 - `vite` is pinned as a devDependency so `@tailwindcss/vite` resolves the same
   Vite major as Astro (removing it re-introduces a rolldown-vite binding
   mismatch at build time).

@@ -58,6 +58,6 @@ curriculum that prevents the covariances from collapsing.
 **Why it matters.** On CO3D the learned covariances calibrate with a single
 temperature, and their structure matches the analytical covariances of
 classical bundle adjustment. On EPIC-KITCHENS the predicted variance rises
-sharply on frames the model has placed wrongly. Together these results turn an
-opaque reconstruction model into a component that can sit inside a
-probabilistic pipeline, and give it a failure detector at no extra cost.
+sharply on frames the model has placed wrongly. This turns an otherwise
+deterministic reconstructor into a component that can be used in probabilistic
+pipelines, without modifying its frozen pose predictor.

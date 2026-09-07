@@ -7,7 +7,7 @@ name: "Leonardo Vanni"
 status: "Incoming M.Sc. Mathematics in Science and Engineering, TUM · 3D and 4D computer vision"
 statusFrom: "M.Sc. Mathematics in Science and Engineering, TUM · 3D and 4D computer vision"
 # The large display statement.
-statement: "I build computer vision systems that reconstruct moving 3D scenes and estimate how far their predictions can be trusted."
+statement: "I build computer vision systems that reconstruct moving 3D scenes and estimate when their predictions can be trusted."
 # Quiet line under the links while actively applying. Delete once a position
 # is secured.
 seeking: "Open to computer vision research and engineering roles in Munich, Zurich, and Paris."
