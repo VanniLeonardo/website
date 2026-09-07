@@ -32,6 +32,10 @@ links:
     url: "https://github.com/VanniLeonardo/Prosthetic-Arm"
   - label: "Report (ResearchGate)"
     url: "https://www.researchgate.net/publication/393399982_Vision-Based_Grasp_Validation_for_Prosthetic_Arms_using_3D_Scene_Analysis"
+figure:
+  src: "../../assets/prosthetic/grasp-validation.png"
+  alt: "Two frames from the live demo. Left: a pinch grasp on a bottle, green box, labelled Grasp True 0.79. Right: a closed fist on the same bottle, red box, labelled Grasp False. Both frames overlay tracked hand landmarks and run at about 27 frames per second."
+  caption: "Grasp validation running live at ~27 FPS: a feasible pinch (green, Grasp: True 0.79) and an infeasible fist on the same object (red, Grasp: False), with tracked hand landmarks and the object's 3D box."
 featured: true
 order: 3
 ---
