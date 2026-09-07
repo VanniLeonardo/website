@@ -64,9 +64,9 @@ in `src/content.config.ts`. Key fields: `title`, `shortTitle` (kicker label),
 `comingSoon?`, `featured`, `order`, `draft?`.
 
 The markdown **body** is the researcher-facing detail (problem / idea / why
-it matters) rendered on `/research/`; when a project has no body (TopoEgo,
-until release), the `abstract` is shown there instead. Homepage shows the
-three `featured: true` entries.
+it matters) rendered on `/research/`; when a project has no body, the
+`abstract` is shown there instead. Homepage shows the three `featured: true`
+entries.
 
 - `draft: true` → never built.
 - A row shows its links row **or** the muted `comingSoon` line, never both.
@@ -110,9 +110,9 @@ the first note). When the first note goes live, revisit the intro sentence in
 
 ## TUM announcement checklist (do NOT edit before it is public)
 
-TUM must not appear as Leonardo's own destination until publicly announced;
-as the affiliation of TopoEgo collaborators it is fine. On announcement day,
-search the codebase for `AFTER TUM` and follow each comment:
+TUM must not appear as Leonardo's own destination until publicly announced.
+On announcement day, search the codebase for `AFTER TUM` and follow each
+comment:
 
 1. `src/content/pages/bio.md` — insert the TUM clause after the Polytechnique
    clause as the comment specifies.
@@ -120,19 +120,6 @@ search the codebase for `AFTER TUM` and follow each comment:
    it (also update the CV PDF itself).
 3. Off-site (handoff `extras/`, not in this repo): GitHub profile README and
    LinkedIn headline/About.
-
-## TopoEgo release-day checklist
-
-When the paper/code/benchmark go public (see the binding comment in
-`src/content/projects/topoego.md`):
-
-1. Replace the `comingSoon` field with a `links` array (paper, code,
-   benchmark) and write the project body (problem / idea / why it matters).
-2. Consider `status: public` and promote to a dedicated `/projects/topoego/`
-   page (v2 — individual project pages intentionally do not exist in v1).
-3. Add TopoEgo to LinkedIn Featured (handoff `extras/`).
-4. Confirm Federico Tombari's preferred affiliation wording ("TUM" vs
-   "TUM & Google") — see the comment in `topoego.md`.
 
 ## Deployment (GitHub Pages)
 

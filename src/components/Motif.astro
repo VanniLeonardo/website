@@ -3,8 +3,6 @@
 // paper, sparse accent. Decorative (aria-hidden): each is an abstract diagram
 // of the project's core idea, never a fake screenshot or result.
 //
-//   split       TopoEgo — a Gaussian cluster splits into two rigid SE(3)
-//               branches across a topological cut.
 //   covariance  Thesis — camera trajectory with growing pose-covariance
 //               ellipses, plus a 6×6 covariance-matrix glyph.
 //   grasp       Prosthetic arm — wireframe object, detected 3D box, and a
@@ -13,54 +11,11 @@
 //               one uncertainty ellipsoid.
 
 interface Props {
-  kind: 'split' | 'covariance' | 'grasp' | 'pointcloud';
+  kind: 'covariance' | 'grasp' | 'pointcloud';
 }
 
 const { kind } = Astro.props;
 ---
-
-{
-  kind === 'split' && (
-    <svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke-width="1">
-      {/* pre-event: one connected Gaussian cluster */}
-      <g stroke="var(--muted)" opacity="0.75">
-        <ellipse cx="50" cy="78" rx="16" ry="10" transform="rotate(-20 50 78)" />
-        <ellipse cx="66" cy="90" rx="14" ry="9" transform="rotate(15 66 90)" />
-        <ellipse cx="52" cy="98" rx="12" ry="8" transform="rotate(-5 52 98)" />
-        <ellipse cx="68" cy="72" rx="11" ry="7" transform="rotate(30 68 72)" />
-      </g>
-      <g fill="var(--muted)" stroke="none" opacity="0.8">
-        <circle cx="50" cy="78" r="1.4" />
-        <circle cx="66" cy="90" r="1.4" />
-        <circle cx="52" cy="98" r="1.4" />
-        <circle cx="68" cy="72" r="1.4" />
-      </g>
-      {/* topological cut */}
-      <path d="M112 24 132 146" stroke="var(--accent)" stroke-dasharray="5 5" />
-      {/* branch trajectories */}
-      <g stroke="var(--rule)" stroke-dasharray="2 4">
-        <path d="M84 76 Q 120 48 156 50" />
-        <path d="M84 96 Q 120 122 162 118" />
-      </g>
-      {/* post-event: two independent rigid branches */}
-      <g stroke="var(--muted)" opacity="0.75">
-        <ellipse cx="168" cy="48" rx="13" ry="8" transform="rotate(-30 168 48)" />
-        <ellipse cx="184" cy="58" rx="11" ry="7" transform="rotate(-10 184 58)" />
-        <ellipse cx="178" cy="116" rx="14" ry="9" transform="rotate(20 178 116)" />
-        <ellipse cx="194" cy="128" rx="11" ry="7" transform="rotate(40 194 128)" />
-      </g>
-      <g fill="var(--accent)" stroke="none">
-        <circle cx="176" cy="53" r="1.8" />
-        <circle cx="186" cy="122" r="1.8" />
-      </g>
-      {/* per-branch SE(3) motion arrows */}
-      <g stroke="var(--muted)">
-        <path d="M192 40 206 30M206 30 199 31M206 30 205 37" />
-        <path d="M202 138 216 148M216 148 209 147M216 148 215 141" />
-      </g>
-    </svg>
-  )
-}
 
 {
   kind === 'covariance' && (

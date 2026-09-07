@@ -19,6 +19,5 @@ links:
     url: "/cv/"
 ---
 
-Currently: topology-aware 4D Gaussian Splatting for egocentric video
-([TopoEgo](/research/#topoego)), and SE(3)-consistent uncertainty for 3D
-foundation models ([thesis](/thesis/)).
+Currently: dynamic 3D reconstruction, and estimating when learned 3D
+geometry can be trusted ([thesis](/thesis/)).
