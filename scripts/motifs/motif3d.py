@@ -67,10 +67,33 @@ def potato(subdiv=3, seed=7):
     return v, f
 
 
-def pyramid(base=1.0, height=1.35):
-    """A square pyramid: a clean geometric solid whose pose is unambiguous,
-    which is the point when the drawing is about pose uncertainty."""
+def pyramid(base=1.0, height=None, courses=0):
+    """A square pyramid in the proportions of the Great Pyramid: height is
+    0.6366 of the base, which is what stops it reading as a tent.
+
+    With `courses` > 0 it is built as a stack of stepped blocks, which reads
+    unmistakably as masonry rather than as a triangle.
+    """
+    if height is None:
+        height = base * 0.6366
     h = base / 2
+
+    if courses:
+        verts, faces = [], []
+        for i in range(courses):
+            t0, t1 = i / courses, (i + 1) / courses
+            b0, b1 = h * (1 - t0), h * (1 - t1)
+            z0, z1 = height * t0, height * t1
+            base_i = len(verts)
+            verts += [[-b0, -b0, z0], [b0, -b0, z0], [b0, b0, z0], [-b0, b0, z0],
+                      [-b1, -b1, z1], [b1, -b1, z1], [b1, b1, z1], [-b1, b1, z1]]
+            q = [(0, 1, 5, 4), (1, 2, 6, 5), (2, 3, 7, 6), (3, 0, 4, 7),
+                 (4, 5, 6, 7)]
+            for a, b, c, d in q:
+                faces += [[base_i + a, base_i + b, base_i + c],
+                          [base_i + a, base_i + c, base_i + d]]
+        return np.array(verts, float), np.array(faces)
+
     v = np.array([
         [-h, -h, 0.0], [h, -h, 0.0], [h, h, 0.0], [-h, h, 0.0],
         [0.0, 0.0, height],

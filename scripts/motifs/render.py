@@ -19,6 +19,27 @@ class Scene:
     def add_raw(self, depth, svg):
         self.items.append((depth, svg))
 
+    def add_faceted(self, v, f, stroke=INK, width=1.0, fill=PAPER):
+        """Draw a simple solid face by face, far to near.
+
+        Silhouette chaining assumes a dense mesh: on a solid with a handful of
+        vertices the chain runs through shared corners and the outline comes
+        out broken. For a pyramid or a box, painter's algorithm is both exact
+        and cheap.
+        """
+        v2, depth = self.project(v)
+        nv = M.face_normals(v, f) @ self.view[:3, :3].T
+        order = np.argsort(-depth[f].mean(axis=1))
+        parts = []
+        for i in order:
+            if nv[i, 2] >= 0:            # back-facing
+                continue
+            pts = ' '.join(f'{v2[k,0]:.1f},{v2[k,1]:.1f}' for k in f[i])
+            parts.append(f'<polygon points="{pts}" fill="{fill}" '
+                         f'stroke="{stroke}" stroke-width="{width}" '
+                         f'stroke-linejoin="round"/>')
+        self.add_raw(float(depth.mean()), '\n'.join(parts))
+
     def add_mesh(self, v, f, stroke=INK, width=1.0, fill=PAPER,
                  cap_ring=None, cap_stroke=None, include_boundary=True,
                  eps=0.8, min_size=0.0, creases=False):

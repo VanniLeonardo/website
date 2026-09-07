@@ -37,11 +37,11 @@ def cut_over_time(path):
 
     # The cake with the wedge gone, then the wedge itself, pulled clear.
     for (vv, ff) in rest:
-        s.add_mesh(vv, ff, stroke=INK, width=1.0, eps=1.0, min_size=7.0)
+        s.add_mesh(vv, ff, stroke=INK, width=1.0, eps=1.0, min_size=13.0)
     for ring in rings:
         _cut_face(s, ring)
     s.add_mesh(slice_m[0] + pull, slice_m[1], stroke=INK, width=1.0,
-               eps=1.0, min_size=7.0)
+               eps=1.0, min_size=13.0)
     _cut_face(s, rings[1] + pull)
 
     _knife(s, a0)
@@ -62,24 +62,56 @@ def _cut_face(s, ring):
               f'stroke="{ACCENT}" stroke-width="1" stroke-linejoin="round"/>')
 
 
-def _knife(s, angle):
-    """A knife: tapered blade and handle, lying along the cut it made."""
+def _knife_profile(n=26):
+    """A chef's knife in profile: a curved belly rising to a pointed tip, a
+    straight spine, a bolster, and a handle. Returned as one closed polygon in
+    blade coordinates, x from heel to tip and z up."""
+    t = np.linspace(0.0, 1.0, n)
+
+    # Spine: nearly straight, dropping into the tip at the very end.
+    spine_x = -0.30 + 1.42 * t
+    spine_z = 0.150 - 0.01 * t - 0.150 * t ** 4
+
+    # Edge: the belly curve, rising to meet the spine at the tip.
+    edge_x = spine_x
+    edge_z = -0.165 + 0.165 * t ** 1.9
+
+    blade = np.r_[np.c_[spine_x, spine_z], np.c_[edge_x, edge_z][::-1]]
+
+    # Handle, with a bolster step where it meets the blade.
+    handle = np.array([
+        [-0.30, -0.075], [-0.40, -0.105], [-1.16, -0.115],
+        [-1.24, -0.055], [-1.24, 0.075], [-1.16, 0.135],
+        [-0.40, 0.125], [-0.30, 0.155],
+    ])
+    return np.vstack([blade, handle])
+
+
+def _knife(s, angle, lift=0.60, tilt=0.26, scale=0.72):
+    """The knife laid along the cut it made, edge down into the cake."""
+    prof = _knife_profile()
     d = np.array([np.cos(angle), np.sin(angle), 0.0])
     up = np.array([0.0, 0.0, 1.0])
-    side = np.cross(d, up) * 0.045
+    # Tilt the blade so the tip dips towards the cut.
+    d_t = d * np.cos(tilt) - up * np.sin(tilt)
+    up_t = d * np.sin(tilt) + up * np.cos(tilt)
 
-    def quad(a, b, za, zb, w=1.0):
-        return np.array([d * a + up * za - side * w, d * a + up * za + side * w,
-                         d * b + up * zb + side * w, d * b + up * zb - side * w])
+    prof = prof * scale
+    pts3 = np.array([d_t * x + up_t * z + up * lift for x, z in prof])
+    v2, depth = s.project(pts3)
+    path = 'M' + 'L'.join(f'{a:.1f} {b:.1f}' for a, b in v2) + 'Z'
+    s.add_raw(float(depth.mean()) - 2.0,
+              f'<path d="{path}" fill="{PAPER}" stroke="{INK}" '
+              f'stroke-width="1" stroke-linejoin="round"/>')
 
-    blade = quad(-0.15, 1.05, 0.62, 0.86)
-    handle = quad(1.05, 1.62, 0.86, 0.96, w=1.7)
-    for shape in (blade, handle):
-        v2, depth = s.project(shape)
-        path = 'M' + 'L'.join(f'{a:.1f} {b:.1f}' for a, b in v2) + 'Z'
-        s.add_raw(float(depth.mean()) - 1.8,
-                  f'<path d="{path}" fill="{PAPER}" stroke="{INK}" '
-                  f'stroke-width="1" stroke-linejoin="round"/>')
+    # Bolster: the short line where handle meets blade.
+    b = np.array([d_t * -0.30 * scale + up_t * -0.075 * scale + up * lift,
+                  d_t * -0.30 * scale + up_t * 0.150 * scale + up * lift])
+    b2, bd = s.project(b)
+    s.add_raw(float(bd.mean()) - 2.1,
+              f'<path d="M{b2[0,0]:.1f} {b2[0,1]:.1f}L{b2[1,0]:.1f} '
+              f'{b2[1,1]:.1f}" stroke="{INK}" stroke-width="0.8" '
+              f'stroke-linecap="round"/>')
 
 
 def _time_arrow(s, left, right):
@@ -99,8 +131,8 @@ def views_and_uncertainty(path):
     """One object seen from several cameras, drawn as the pyramid frusta the
     3D reconstruction literature uses, with a covariance ellipsoid on the view
     that is least well constrained."""
-    v, f = M.pyramid(base=1.25, height=1.15)
-    obj = G.transform(v, 0.78, G.rot_z(0.55), (0, 0, -0.34))
+    v, f = M.pyramid(base=1.55, courses=10)
+    obj = G.transform(v, 0.72, G.rot_z(np.pi / 4), (0, 0, -0.36))
 
     cams = [(-1.30, 1.75, 0.0), (-0.30, 1.80, 0.0), (0.95, 2.15, 0.20)]
     centres = [np.array([np.cos(a) * d, np.sin(a) * d, 0.30 + 0.16 * i])
@@ -112,7 +144,7 @@ def views_and_uncertainty(path):
     eye = (3.0, -3.4, 2.1)
     s = Scene(eye, (0, 0, 0), scale=autoscale(eye, (0, 0, 0), span, margin=0.9))
 
-    s.add_mesh(obj, f, stroke=INK, width=1.0, creases=True)
+    s.add_faceted(obj, f, stroke=INK, width=0.85)
     for c, (_, _, sigma) in zip(centres, cams):
         _frustum(s, c, np.zeros(3), accent=sigma > 0)
         if sigma:
