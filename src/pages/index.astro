@@ -5,8 +5,8 @@ import ResearchRow from '../components/ResearchRow.astro';
 import NewsItem from '../components/NewsItem.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
 import { Content as HeroCurrently, frontmatter as hero } from '../content/pages/hero.md';
-import { Content as Bio } from '../content/pages/bio.md';
-import { frontmatter as taste } from '../content/pages/taste.md';
+import { Content as Bio, frontmatter as bio } from '../content/pages/bio.md';
+import { byTumStart } from '../lib/dates.ts';
 
 interface HeroLink {
   label: string;
@@ -14,11 +14,9 @@ interface HeroLink {
 }
 const heroLinks: HeroLink[] = hero.links ?? [];
 
-interface TasteItem {
-  heading: string;
-  text: string;
-}
-const tasteItems: TasteItem[] = taste.items ?? [];
+// Wording that depends on whether the TUM programme has started.
+const status = byTumStart(hero.status, hero.statusFrom);
+const bioLead = byTumStart(bio.lead, bio.leadFrom);
 
 const featured = (await getCollection('projects', ({ data }) => data.featured && !data.draft))
   .sort((a, b) => a.data.order - b.data.order)
@@ -57,7 +55,7 @@ const personJsonLd = JSON.stringify({
       <h1 class="font-heading text-[2rem] font-semibold tracking-tight sm:text-4xl">
         {hero.name}
       </h1>
-      <p class="kicker mt-3">{hero.status}</p>
+      <p class="kicker mt-3">{status}</p>
 
       <p
         class="mt-7 max-w-[24ch] font-heading text-[1.6rem] leading-[1.25] font-medium text-balance sm:text-[1.9rem]"
@@ -106,25 +104,11 @@ const personJsonLd = JSON.stringify({
     </p>
   </section>
 
-  {/* Research taste */}
-  <section class="mt-20 border-t border-border pt-8">
-    <h2 class="kicker">What I care about</h2>
-    <div class="mt-6 grid gap-8 sm:grid-cols-3">
-      {
-        tasteItems.map((item) => (
-          <div>
-            <h3 class="font-heading text-base font-semibold">{item.heading}</h3>
-            <p class="mt-2 text-sm leading-relaxed text-muted">{item.text}</p>
-          </div>
-        ))
-      }
-    </div>
-  </section>
-
   {/* Short bio */}
   <section class="mt-20 border-t border-border pt-8">
     <h2 class="kicker">About</h2>
     <div class="prose mt-4">
+      <p>{bioLead}</p>
       <Bio />
     </div>
   </section>
