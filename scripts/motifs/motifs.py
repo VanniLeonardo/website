@@ -130,20 +130,20 @@ def views_and_uncertainty(path):
     reconstruction literature uses, with a covariance ellipsoid on the view
     that is least well constrained."""
     v, f = MD.prepare('khronos:ToyCar', faces=2600, drop_flat=True)
-    obj = G.transform(G.y_up_to_z_up(v), 1.18, G.rot_z(-0.86), (0, 0, -0.16))
+    obj = G.transform(G.y_up_to_z_up(v), 1.18, G.rot_z(1.25), (0, 0, -0.16))
 
-    cams = [(-1.50, 2.30, 0.0), (-0.32, 2.40, 0.0), (1.00, 2.70, 0.20)]
-    centres = [np.array([np.cos(a) * d, np.sin(a) * d, 0.30 + 0.16 * i])
+    cams = [(0.35, 2.15, 0.0), (1.30, 2.25, 0.0), (2.45, 2.55, 0.20)]
+    centres = [np.array([np.cos(a) * d, np.sin(a) * d, 0.26 + 0.14 * i])
                for i, (a, d, _) in enumerate(cams)]
 
     span = np.vstack([obj]
                      + [c + np.array([0.5, 0.5, 0.5]) for c in centres]
                      + [c - np.array([0.5, 0.5, 0.5]) for c in centres])
-    eye = (3.0, -3.4, 2.1)
+    eye = (0.9, -4.2, 1.25)
     s = Scene(eye, (0, 0, 0), scale=autoscale(eye, (0, 0, 0), span, margin=0.9))
 
-    s.add_mesh(obj, f, stroke=INK, width=1.0, eps=1.3, min_size=8.0,
-               creases=True, crease_angle=38.0, crease_min_px=4.5)
+    s.add_mesh(obj, f, stroke=INK, width=1.0, eps=1.1, min_size=6.0,
+               creases=True, crease_angle=32.0, crease_min_px=3.5)
     for c, (_, _, sigma) in zip(centres, cams):
         _frustum(s, c, np.zeros(3), accent=sigma > 0)
         if sigma:
@@ -161,7 +161,7 @@ def _frustum(s, c, target, accent=False):
     r = np.cross(fwd, [0, 0, 1.0])
     r /= np.linalg.norm(r)
     u = np.cross(r, fwd)
-    k, depth_k = 0.24, 0.42
+    k, depth_k = 0.30, 0.50
     base = np.array([c + fwd * depth_k + (a * r + b * u) * k
                      for a, b in ((-1, -0.72), (1, -0.72), (1, 0.72), (-1, 0.72))])
     v2, depth = s.project(np.vstack([[c], base]))
