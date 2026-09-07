@@ -2,6 +2,7 @@
 import numpy as np
 import motif3d as M
 import geom as G
+import models as MD
 
 PAPER, INK, FAINT, ACCENT = M.PAPER, M.INK, M.FAINT, M.ACCENT
 
@@ -19,7 +20,8 @@ class Scene:
         self.items.append((depth, svg))
 
     def add_mesh(self, v, f, stroke=INK, width=1.0, fill=PAPER,
-                 cap_ring=None, cap_stroke=None, include_boundary=True):
+                 cap_ring=None, cap_stroke=None, include_boundary=True,
+                 eps=0.8):
         """Draw a solid: its outline as one filled path, so it occludes what
         lies behind it, plus optional highlighted cap faces (a cut surface)."""
         v2, depth = self.project(v)
@@ -29,13 +31,22 @@ class Scene:
 
         parts = []
         for loop in G.silhouette_loops(v2, f, facing, include_boundary):
-            parts.append(f'<path d="{G.path_from_loop(v2, loop)}" fill="{fill}" '
-                         f'stroke="{stroke}" stroke-width="{width}" '
-                         f'stroke-linejoin="round"/>')
+            pts = MD.simplify(v2[loop], eps=eps)
+            if len(pts) < 3:
+                continue
+            closed = np.linalg.norm(pts[0] - pts[-1]) < 6.0
+            d = 'M' + 'L'.join(f'{x:.1f} {y:.1f}' for x, y in pts)
+            parts.append(
+                f'<path d="{d}Z" fill="{fill}" stroke="{stroke}" '
+                f'stroke-width="{width}" stroke-linejoin="round"/>' if closed else
+                f'<path d="{d}" fill="none" stroke="{stroke}" '
+                f'stroke-width="{width}" stroke-linejoin="round" '
+                f'stroke-linecap="round"/>')
 
         if cap_ring is not None and len(cap_ring):
             # The cut surface, drawn from the true intersection ring.
             r2, rd = self.project(cap_ring)
+            r2 = MD.simplify(r2, eps=eps * 0.6)
             d = 'M' + 'L'.join(f'{x:.1f} {y:.1f}' for x, y in r2) + 'Z'
             parts.append(f'<path d="{d}" fill="{PAPER}" '
                          f'stroke="{cap_stroke or ACCENT}" '

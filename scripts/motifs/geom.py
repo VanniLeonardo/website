@@ -147,6 +147,11 @@ def rot_z(a):
     return np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
 
 
+def y_up_to_z_up(v):
+    """Poly Haven models stand on the y axis; the scene is z-up."""
+    return np.c_[v[:, 0], -v[:, 2], v[:, 1]]
+
+
 def rot_y(a):
     c, s = np.cos(a), np.sin(a)
     return np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]])

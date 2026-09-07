@@ -19,3 +19,6 @@ lh-*.json
 # OS / editor
 .DS_Store
 Thumbs.db
+
+# Source meshes cached by the motif generator (CC0, re-downloaded on demand)
+scripts/motifs/cache/

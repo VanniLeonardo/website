@@ -1,0 +1,9 @@
+# Authoring-time only. These are never shipped and are not runtime dependencies
+# of the site: the generator emits static SVG, which is what gets committed.
+numpy
+trimesh
+scipy
+networkx
+shapely
+mapbox-earcut
+fast-simplification
