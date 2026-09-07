@@ -14,7 +14,7 @@ export default defineConfig({
   // Old routes folded into the simplified nav (static meta-refresh pages).
   redirects: {
     '/projects/': '/research/',
-    '/teaching/': '/cv/',
+    '/teaching/': '/experience/',
   },
   markdown: {
     // Build-time math: $...$ / $$...$$ -> KaTeX HTML (CSS imported once in global.css).

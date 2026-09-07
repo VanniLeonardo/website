@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import { Content as CvBody, frontmatter } from '../content/pages/cv-page.md';
-import { Content as Teaching } from '../content/pages/teaching.md';
 ---
 
 <Base title="CV — Leonardo Vanni" description={frontmatter.description}>
@@ -43,11 +42,4 @@ import { Content as Teaching } from '../content/pages/teaching.md';
     <CvBody />
   </div>
 
-  {/* Teaching & leadership live on the CV page — /teaching/ redirects here. */}
-  <section class="mt-12 max-w-[68ch] border-t border-border pt-8">
-    <h2 class="kicker">Teaching & Leadership</h2>
-    <div class="prose mt-2">
-      <Teaching />
-    </div>
-  </section>
 </Base>

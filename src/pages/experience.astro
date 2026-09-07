@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import ExperienceEntry from '../components/ExperienceEntry.astro';
+import { Content as Intro, frontmatter } from '../content/pages/experience.md';
+
+interface Entry {
+  role: string;
+  organization: string;
+  period: string;
+  featured?: boolean;
+  bullets?: string[];
+  links?: { label: string; url: string }[];
+}
+
+interface TeachingEntry {
+  role: string;
+  organization: string;
+  period: string;
+  note: string;
+}
+
+const entries: Entry[] = frontmatter.entries ?? [];
+const teaching: TeachingEntry[] = frontmatter.teaching ?? [];
+---
+
+<Base title="Experience — Leonardo Vanni" description={frontmatter.description}>
+  <h1 class="font-heading text-3xl font-semibold">{frontmatter.title}</h1>
+  <div class="prose mt-6 text-muted">
+    <Intro />
+  </div>
+
+  <div class="mt-12 grid gap-8">
+    {entries.map((entry) => <ExperienceEntry {...entry} as="h2" />)}
+  </div>
+
+  <section class="mt-16">
+    <h2 class="kicker">Teaching &amp; leadership</h2>
+    <div class="mt-5 grid gap-6">
+      {
+        teaching.map((item) => (
+          <article class="max-w-[68ch] border-t border-border pt-4">
+            <p class="kicker flex flex-wrap items-baseline gap-x-2">
+              <span>{item.organization}</span>
+              <span aria-hidden="true">·</span>
+              <span>{item.period}</span>
+            </p>
+            <h3 class="mt-1.5 font-heading text-base font-semibold">{item.role}</h3>
+            <p class="mt-1.5 text-[0.95rem] leading-relaxed text-muted">{item.note}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</Base>

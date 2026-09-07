@@ -6,6 +6,9 @@ import NewsItem from '../components/NewsItem.astro';
 import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
 import { Content as HeroCurrently, frontmatter as hero } from '../content/pages/hero.md';
 import { Content as Bio, frontmatter as bio } from '../content/pages/bio.md';
+import { frontmatter as background } from '../content/pages/background.md';
+import { frontmatter as experience } from '../content/pages/experience.md';
+import ExperienceEntry from '../components/ExperienceEntry.astro';
 import { byTumStart } from '../lib/dates.ts';
 
 interface HeroLink {
@@ -13,6 +16,25 @@ interface HeroLink {
   url: string;
 }
 const heroLinks: HeroLink[] = hero.links ?? [];
+
+interface BackgroundEntry {
+  institution: string;
+  qualification: string;
+  period: string;
+  note: string;
+  url?: string;
+}
+const education: BackgroundEntry[] = background.entries ?? [];
+
+interface ExperienceItem {
+  role: string;
+  organization: string;
+  period: string;
+  featured?: boolean;
+}
+const roles: ExperienceItem[] = (experience.entries ?? []).filter(
+  (entry: ExperienceItem) => entry.featured,
+);
 
 // Wording that depends on whether the TUM programme has started.
 const status = byTumStart(hero.status, hero.statusFrom);
@@ -91,7 +113,7 @@ const personJsonLd = JSON.stringify({
 
   {/* Selected research */}
   <section class="mt-20">
-    <h2 class="kicker">Selected research</h2>
+    <h2 class="kicker">Selected work</h2>
     <div class="mt-5 grid gap-10">
       {featured.map((project) => <ResearchRow project={project} />)}
     </div>
@@ -100,6 +122,49 @@ const personJsonLd = JSON.stringify({
         href="/research/"
         class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
         >Full research page →</a
+      >
+    </p>
+  </section>
+
+  {/* Background */}
+  <section class="mt-20 border-t border-border pt-8">
+    <h2 class="kicker">Background</h2>
+    <ul class="mt-5 grid gap-5">
+      {
+        education.map((entry) => (
+          <li class="max-w-[68ch]">
+            <p class="kicker flex flex-wrap items-baseline gap-x-2">
+              <span>{entry.period}</span>
+            </p>
+            <p class="mt-1 font-heading text-base font-semibold">
+              {entry.url ? (
+                <a href={entry.url} class="hover:text-accent">
+                  {entry.institution}
+                </a>
+              ) : (
+                entry.institution
+              )}
+            </p>
+            <p class="mt-0.5 text-[0.95rem] text-muted">
+              {entry.qualification} — {entry.note}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  {/* Selected experience */}
+  <section class="mt-20 border-t border-border pt-8">
+    <h2 class="kicker">Selected experience</h2>
+    <div class="mt-5 grid gap-5">
+      {roles.map((role) => <ExperienceEntry {...role} compact />)}
+    </div>
+    <p class="mt-8 text-sm">
+      <a
+        href="/experience/"
+        class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
+        >Full experience page →</a
       >
     </p>
   </section>
