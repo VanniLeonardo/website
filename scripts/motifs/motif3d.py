@@ -105,6 +105,44 @@ def pyramid(base=1.0, height=None, courses=0):
     return v, f
 
 
+def cake_sector(a0, a1, radius=1.0, height=0.42, seg=34):
+    """A solid wedge of a round cake, from angle a0 to a1.
+
+    Built rather than carved. A cake is a cylinder, so the exact geometry is
+    two flat side faces, a curved wall, and a top and bottom: clean, closed,
+    and with cut faces that are perfectly flat. Slicing a scanned model gives
+    a ragged notch and a cap that spans the whole diameter.
+    """
+    n = max(2, int(seg * abs(a1 - a0) / (2 * np.pi)) + 2)
+    ang = np.linspace(a0, a1, n)
+    rim = np.c_[np.cos(ang), np.sin(ang)] * radius
+
+    verts = [[0.0, 0.0, 0.0], [0.0, 0.0, height]]
+    for x, y in rim:
+        verts += [[x, y, 0.0], [x, y, height]]
+    v = np.array(verts, float)
+
+    faces = []
+    for i in range(n - 1):
+        b0, t0 = 2 + 2 * i, 3 + 2 * i
+        b1, t1 = 2 + 2 * (i + 1), 3 + 2 * (i + 1)
+        faces += [[b0, b1, t1], [b0, t1, t0]]     # outer wall
+        faces += [[0, b1, b0]]                    # bottom fan
+        faces += [[1, t0, t1]]                    # top fan
+    # The two flat cut faces.
+    faces += [[0, 2, 3], [0, 3, 1]]
+    last_b, last_t = 2 + 2 * (n - 1), 3 + 2 * (n - 1)
+    faces += [[0, last_t, last_b], [0, 1, last_t]]
+    return v, np.array(faces)
+
+
+def cut_face_quad(angle, radius=1.0, height=0.42):
+    """The flat face one radial cut leaves: axis to rim, base to top."""
+    d = np.array([np.cos(angle), np.sin(angle), 0.0])
+    return np.array([[0, 0, 0], d * radius, d * radius + [0, 0, height],
+                     [0, 0, height]])
+
+
 # ------------------------------------------------------------------ camera --
 def look_at(eye, target, up=(0, 0, 1)):
     eye, target, up = map(lambda a: np.asarray(a, float), (eye, target, up))

@@ -49,6 +49,18 @@ def fetch(slug, res='2k'):
     return gltf_path
 
 
+KHRONOS = ('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/'
+           'main/Models/{name}/glTF-Binary/{name}.glb')
+
+
+def fetch_khronos(name):
+    """Fetch one model from the Khronos glTF sample assets. Check the model's
+    README for its licence before using it: the collection mixes CC0 and CC-BY,
+    and only CC0 keeps this site free of attribution obligations."""
+    dest = CACHE / 'khronos' / f'{name}.glb'
+    return _get(KHRONOS.format(name=name), dest)
+
+
 def load(slug, res='2k'):
     """Return (vertices, faces) for a Poly Haven model, centred and unit-sized."""
     import numpy as np

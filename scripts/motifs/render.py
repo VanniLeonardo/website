@@ -19,30 +19,55 @@ class Scene:
     def add_raw(self, depth, svg):
         self.items.append((depth, svg))
 
-    def add_faceted(self, v, f, stroke=INK, width=1.0, fill=PAPER):
-        """Draw a simple solid face by face, far to near.
+    def add_faceted(self, v, f, stroke=INK, width=1.0, fill=PAPER,
+                    crease_angle=25.0):
+        """Draw a built solid: fill its faces for occlusion, then stroke only
+        the edges that are really there.
 
-        Silhouette chaining assumes a dense mesh: on a solid with a handful of
-        vertices the chain runs through shared corners and the outline comes
-        out broken. For a pyramid or a box, painter's algorithm is both exact
-        and cheap.
+        Stroking every triangle turns a tessellated cylinder into a fan of
+        spokes. What should be drawn is the silhouette and the sharp creases;
+        the triangles that tile a flat top or a smooth wall are invisible in
+        the real object.
         """
         v2, depth = self.project(v)
         nv = M.face_normals(v, f) @ self.view[:3, :3].T
-        order = np.argsort(-depth[f].mean(axis=1))
+        facing = nv[:, 2] < 0
+
         parts = []
-        for i in order:
-            if nv[i, 2] >= 0:            # back-facing
+        for i in np.argsort(-depth[f].mean(axis=1)):
+            if not facing[i]:
                 continue
             pts = ' '.join(f'{v2[k,0]:.1f},{v2[k,1]:.1f}' for k in f[i])
             parts.append(f'<polygon points="{pts}" fill="{fill}" '
-                         f'stroke="{stroke}" stroke-width="{width}" '
-                         f'stroke-linejoin="round"/>')
+                         f'stroke="none"/>')
+
+        edges = {}
+        for i, tri in enumerate(f):
+            for a, b in ((tri[0], tri[1]), (tri[1], tri[2]), (tri[2], tri[0])):
+                edges.setdefault((min(a, b), max(a, b)), []).append(i)
+
+        cos_lim = np.cos(np.radians(crease_angle))
+        draw = []
+        for (a, b), fs in edges.items():
+            if len(fs) == 1:
+                if facing[fs[0]]:
+                    draw.append((a, b))
+            elif facing[fs[0]] != facing[fs[1]]:
+                draw.append((a, b))                      # silhouette
+            elif facing[fs[0]] and float(nv[fs[0]] @ nv[fs[1]]) < cos_lim:
+                draw.append((a, b))                      # visible crease
+        if draw:
+            d = ''.join(f'M{v2[a,0]:.1f} {v2[a,1]:.1f}'
+                        f'L{v2[b,0]:.1f} {v2[b,1]:.1f}' for a, b in draw)
+            parts.append(f'<path d="{d}" fill="none" stroke="{stroke}" '
+                         f'stroke-width="{width}" stroke-linecap="round"/>')
+
         self.add_raw(float(depth.mean()), '\n'.join(parts))
 
     def add_mesh(self, v, f, stroke=INK, width=1.0, fill=PAPER,
                  cap_ring=None, cap_stroke=None, include_boundary=True,
-                 eps=0.8, min_size=0.0, creases=False):
+                 eps=0.8, min_size=0.0, creases=False,
+                 crease_angle=22.0, crease_min_px=0.0):
         """Draw a solid: its outline as one filled path, so it occludes what
         lies behind it, plus optional highlighted cap faces (a cut surface)."""
         v2, depth = self.project(v)
@@ -70,7 +95,12 @@ class Scene:
                 f'stroke-linecap="round"/>')
 
         if creases:
-            fe = G.feature_edges(v, f, nv, facing)
+            fe = G.feature_edges(v, f, nv, facing, angle_deg=crease_angle)
+            if crease_min_px:
+                # On a dense model the creases outnumber everything else and
+                # the short ones read as noise at this size.
+                fe = [(a, b) for a, b in fe
+                      if np.linalg.norm(v2[a] - v2[b]) >= crease_min_px]
             if fe:
                 d = ''.join(f'M{v2[a,0]:.1f} {v2[a,1]:.1f}'
                             f'L{v2[b,0]:.1f} {v2[b,1]:.1f}' for a, b in fe)

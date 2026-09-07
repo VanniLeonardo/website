@@ -20,31 +20,29 @@ from render import Scene, autoscale, PAPER, INK, FAINT, ACCENT
 def cut_over_time(path):
     """A round cake with one slice cut and drawn pulled clear, the knife still
     in the cut. A wedge missing from a circle reads as 'this was cut' at a
-    glance; showing a before and an after halved the size of both and read as
-    neither."""
-    v, f = MD.prepare('carrot_cake', faces=2400, part=True)
-    v = G.y_up_to_z_up(v)
-    v = v / np.abs(v[:, :2]).max()          # unit radius in plan
+    glance."""
+    a0, a1 = 0.35, 1.30
+    R, H = 1.0, 0.44
 
-    a0, a1 = 0.30, 1.30
-    slice_m, rest, rings = MD.radial_split(v, f, a0, a1)
+    rest_v, rest_f = M.cake_sector(a1, a0 + 2 * np.pi, R, H)
+    wedge_v, wedge_f = M.cake_sector(a0, a1, R, H)
+
     mid = (a0 + a1) / 2
-    pull = np.array([np.cos(mid), np.sin(mid), 0]) * 0.70
+    pull = np.array([np.cos(mid), np.sin(mid), 0]) * 0.62
 
-    eye = (1.1, -3.9, 2.7)
-    span = np.vstack([v, slice_m[0] + pull, [[0, 0, 1.30]]])
-    s = Scene(eye, (0, 0, 0), scale=autoscale(eye, (0, 0, 0), span, margin=0.93))
+    eye = (1.15, -3.6, 2.5)
+    span = np.vstack([rest_v, wedge_v + pull, [[0, 0, 1.15]]])
+    s = Scene(eye, (0, 0, 0), scale=autoscale(eye, (0, 0, 0), span, margin=0.92))
 
-    # The cake with the wedge gone, then the wedge itself, pulled clear.
-    for (vv, ff) in rest:
-        s.add_mesh(vv, ff, stroke=INK, width=1.0, eps=1.0, min_size=13.0)
-    for ring in rings:
-        _cut_face(s, ring)
-    s.add_mesh(slice_m[0] + pull, slice_m[1], stroke=INK, width=1.0,
-               eps=1.0, min_size=13.0)
-    _cut_face(s, rings[1] + pull)
+    s.add_faceted(rest_v, rest_f, stroke=INK, width=0.9)
+    for ang in (a0, a1):
+        _cut_face(s, M.cut_face_quad(ang, R, H))
 
-    _knife(s, a0)
+    s.add_faceted(wedge_v + pull, wedge_f, stroke=INK, width=0.9)
+    for ang in (a0, a1):
+        _cut_face(s, M.cut_face_quad(ang, R, H) + pull)
+
+    _knife(s, a0, lift=H + 0.16)
     _write(path, s)
     return path
 
@@ -128,13 +126,13 @@ def _time_arrow(s, left, right):
 
 # ------------------------------------------------------------- 2. thesis ----
 def views_and_uncertainty(path):
-    """One object seen from several cameras, drawn as the pyramid frusta the
-    3D reconstruction literature uses, with a covariance ellipsoid on the view
+    """A car seen from several cameras, drawn as the pyramid frusta the 3D
+    reconstruction literature uses, with a covariance ellipsoid on the view
     that is least well constrained."""
-    v, f = M.pyramid(base=1.55, courses=10)
-    obj = G.transform(v, 0.72, G.rot_z(np.pi / 4), (0, 0, -0.36))
+    v, f = MD.prepare('khronos:ToyCar', faces=2200, drop_flat=True)
+    obj = G.transform(G.y_up_to_z_up(v), 0.80, G.rot_z(2.2), (0, 0, -0.20))
 
-    cams = [(-1.30, 1.75, 0.0), (-0.30, 1.80, 0.0), (0.95, 2.15, 0.20)]
+    cams = [(-1.45, 2.35, 0.0), (-0.35, 2.45, 0.0), (0.95, 2.75, 0.22)]
     centres = [np.array([np.cos(a) * d, np.sin(a) * d, 0.30 + 0.16 * i])
                for i, (a, d, _) in enumerate(cams)]
 
@@ -144,7 +142,8 @@ def views_and_uncertainty(path):
     eye = (3.0, -3.4, 2.1)
     s = Scene(eye, (0, 0, 0), scale=autoscale(eye, (0, 0, 0), span, margin=0.9))
 
-    s.add_faceted(obj, f, stroke=INK, width=0.85)
+    s.add_mesh(obj, f, stroke=INK, width=1.0, eps=1.4, min_size=9.0,
+               creases=True, crease_angle=42.0, crease_min_px=4.0)
     for c, (_, _, sigma) in zip(centres, cams):
         _frustum(s, c, np.zeros(3), accent=sigma > 0)
         if sigma:

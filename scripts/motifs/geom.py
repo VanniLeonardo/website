@@ -179,3 +179,42 @@ def feature_edges(v, f, normals, facing, angle_deg=22.0):
         if float(normals[fs[0]] @ normals[fs[1]]) < cos_lim:
             out.append((a, b))
     return out
+
+
+def plane_patch_ring(v, f, normal, d=0.0, tol=0.02):
+    """Outline of the faces lying in a given plane.
+
+    Slicing a whole cake in half caps the entire diameter, but only the part
+    inside the removed wedge is actually exposed. Taking the outline of the
+    wedge's own face gives the notch, not the whole cross-section.
+    """
+    n = np.asarray(normal, float)
+    n = n / np.linalg.norm(n)
+    sel = f[np.abs(v[f].mean(axis=1) @ n - d) < tol]
+    if not len(sel):
+        return np.zeros((0, 3))
+
+    edges = {}
+    for tri in sel:
+        for a, b in ((tri[0], tri[1]), (tri[1], tri[2]), (tri[2], tri[0])):
+            key = (min(a, b), max(a, b))
+            edges[key] = edges.get(key, 0) + 1
+    boundary = [e for e, c in edges.items() if c == 1]
+    if not boundary:
+        return np.zeros((0, 3))
+
+    adj = {}
+    for a, b in boundary:
+        adj.setdefault(a, []).append(b)
+        adj.setdefault(b, []).append(a)
+    start = next(iter(adj))
+    loop, cur, prev = [start], start, None
+    while True:
+        nxt = next((x for x in adj[cur] if x != prev), None)
+        if nxt is None or nxt == start:
+            break
+        loop.append(nxt)
+        prev, cur = cur, nxt
+        if len(loop) > len(adj):
+            break
+    return v[loop]

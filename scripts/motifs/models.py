@@ -12,6 +12,11 @@ import fetch
 
 
 def _mesh(slug, res='2k'):
+    if slug.startswith('khronos:'):
+        scene = trimesh.load(str(fetch.fetch_khronos(slug.split(':', 1)[1])),
+                             force='mesh', process=True)
+        return trimesh.Trimesh(np.asarray(scene.vertices, float),
+                               np.asarray(scene.faces, int), process=True)
     v, f = fetch.load(slug, res)
     return trimesh.Trimesh(v, f, process=True)
 
@@ -43,10 +48,26 @@ def biggest_part(mesh, cluster=True):
     return trimesh.util.concatenate([parts[j] for j in best])
 
 
-def prepare(slug, faces=900, part=False, res='2k'):
+def drop_flat_parts(mesh, thickness=0.02):
+    """Discard near-planar components, which is how a bundled ground plane or
+    backdrop arrives: it renders as a big stray quad under the subject."""
+    parts = mesh.split(only_watertight=False)
+    if len(parts) <= 1:
+        return mesh
+    scale = float(np.abs(mesh.bounds).max())
+    keep = [p for p in parts
+            if float((p.bounds[1] - p.bounds[0]).min()) > thickness * scale]
+    if not keep:
+        return mesh
+    return trimesh.util.concatenate(keep)
+
+
+def prepare(slug, faces=900, part=False, res='2k', drop_flat=False):
     """Load, optionally isolate one object, decimate, and normalise to a unit
     box centred on the origin."""
     m = _mesh(slug, res)
+    if drop_flat:
+        m = drop_flat_parts(m)
     if part:
         m = biggest_part(m)
     if len(m.faces) > faces:
