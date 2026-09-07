@@ -155,3 +155,27 @@ def y_up_to_z_up(v):
 def rot_y(a):
     c, s = np.cos(a), np.sin(a)
     return np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]])
+
+
+def feature_edges(v, f, normals, facing, angle_deg=22.0):
+    """Sharp creases that are visible: both adjacent faces point at the camera
+    and the angle between them is large.
+
+    A silhouette alone draws a faceted solid as a blank outline, because its
+    ridges sit between two front-facing faces and never reach the silhouette.
+    """
+    edges = {}
+    for i, tri in enumerate(f):
+        for a, b in ((tri[0], tri[1]), (tri[1], tri[2]), (tri[2], tri[0])):
+            edges.setdefault((min(a, b), max(a, b)), []).append(i)
+
+    cos_lim = np.cos(np.radians(angle_deg))
+    out = []
+    for (a, b), fs in edges.items():
+        if len(fs) != 2:
+            continue
+        if not (facing[fs[0]] and facing[fs[1]]):
+            continue
+        if float(normals[fs[0]] @ normals[fs[1]]) < cos_lim:
+            out.append((a, b))
+    return out

@@ -21,7 +21,7 @@ class Scene:
 
     def add_mesh(self, v, f, stroke=INK, width=1.0, fill=PAPER,
                  cap_ring=None, cap_stroke=None, include_boundary=True,
-                 eps=0.8):
+                 eps=0.8, min_size=0.0, creases=False):
         """Draw a solid: its outline as one filled path, so it occludes what
         lies behind it, plus optional highlighted cap faces (a cut surface)."""
         v2, depth = self.project(v)
@@ -34,6 +34,11 @@ class Scene:
             pts = MD.simplify(v2[loop], eps=eps)
             if len(pts) < 3:
                 continue
+            # Surface detail on a scanned model throws off dozens of tiny
+            # silhouette loops that read as speckle and dominate the file size.
+            extent = pts.max(axis=0) - pts.min(axis=0)
+            if max(extent) < min_size:
+                continue
             closed = np.linalg.norm(pts[0] - pts[-1]) < 6.0
             d = 'M' + 'L'.join(f'{x:.1f} {y:.1f}' for x, y in pts)
             parts.append(
@@ -42,6 +47,15 @@ class Scene:
                 f'<path d="{d}" fill="none" stroke="{stroke}" '
                 f'stroke-width="{width}" stroke-linejoin="round" '
                 f'stroke-linecap="round"/>')
+
+        if creases:
+            fe = G.feature_edges(v, f, nv, facing)
+            if fe:
+                d = ''.join(f'M{v2[a,0]:.1f} {v2[a,1]:.1f}'
+                            f'L{v2[b,0]:.1f} {v2[b,1]:.1f}' for a, b in fe)
+                parts.append(f'<path d="{d}" fill="none" stroke="{stroke}" '
+                             f'stroke-width="{width * 0.85}" '
+                             f'stroke-linecap="round"/>')
 
         if cap_ring is not None and len(cap_ring):
             # The cut surface, drawn from the true intersection ring.

@@ -18,64 +18,68 @@ from render import Scene, autoscale, PAPER, INK, FAINT, ACCENT
 
 # --------------------------------------------------- 1. current research ----
 def cut_over_time(path):
-    """An avocado, the blade coming down, then the two halves turned to show
-    their cut faces. Turning the far half through 180 degrees is what makes
-    the cut read: seen edge-on, a cut face is only a sliver."""
-    v, f = MD.prepare('food_avocado_01', faces=1100)
-    v = G.y_up_to_z_up(v) * 0.95
+    """A round cake with one slice cut and drawn pulled clear, the knife still
+    in the cut. A wedge missing from a circle reads as 'this was cut' at a
+    glance; showing a before and an after halved the size of both and read as
+    neither."""
+    v, f = MD.prepare('carrot_cake', faces=2400, part=True)
+    v = G.y_up_to_z_up(v)
+    v = v / np.abs(v[:, :2]).max()          # unit radius in plan
 
-    # Cut on a vertical plane, so the blade reads as a knife coming down. Each
-    # half is then turned a quarter turn to present its cut face to the camera.
-    normal = (1.0, 0.0, 0.0)
-    (va, fa), (vb, fb), ring = MD.slice_capped(v, f, normal)
+    a0, a1 = 0.30, 1.30
+    slice_m, rest, rings = MD.radial_split(v, f, a0, a1)
+    mid = (a0 + a1) / 2
+    pull = np.array([np.cos(mid), np.sin(mid), 0]) * 0.70
 
-    left, right = -1.75, 1.05
-    gap = 0.80
-    whole = v + np.array([left, 0, 0])
+    eye = (1.1, -3.9, 2.7)
+    span = np.vstack([v, slice_m[0] + pull, [[0, 0, 1.30]]])
+    s = Scene(eye, (0, 0, 0), scale=autoscale(eye, (0, 0, 0), span, margin=0.93))
 
-    # A quarter turn each, in opposite directions, brings both cut faces round
-    # to the camera; without it a cut face is only a sliver.
-    halves = []
-    for (vv, ff), turn, dx in (((va, fa), np.pi / 2 - 0.30, -gap),
-                               ((vb, fb), -np.pi / 2 + 0.30, gap)):
-        rot = G.rot_z(turn)
-        shift = np.array([right + dx, 0, 0])
-        halves.append((G.transform(vv, 1.0, rot, shift), ff,
-                       G.transform(ring, 1.0, rot, shift)))
+    # The cake with the wedge gone, then the wedge itself, pulled clear.
+    for (vv, ff) in rest:
+        s.add_mesh(vv, ff, stroke=INK, width=1.0, eps=1.0, min_size=7.0)
+    for ring in rings:
+        _cut_face(s, ring)
+    s.add_mesh(slice_m[0] + pull, slice_m[1], stroke=INK, width=1.0,
+               eps=1.0, min_size=7.0)
+    _cut_face(s, rings[1] + pull)
 
-    span = np.vstack([whole] + [h[0] for h in halves]
-                     + [[[left - 0.8, 0, -1.25], [right + gap + 0.8, 0, -1.25],
-                         [left, 0.0, 2.05]]])
-    eye = (0.55, -4.9, 1.35)
-    s = Scene(eye, (0, 0, 0), scale=autoscale(eye, (0, 0, 0), span, margin=0.9))
-
-    s.add_mesh(whole, f, stroke=INK, width=1.0)
-    _blade(s, left)
-    for vv, ff, rr in halves:
-        s.add_mesh(vv, ff, stroke=INK, width=1.0, cap_ring=rr,
-                   cap_stroke=ACCENT, include_boundary=False)
-    _time_arrow(s, left, right + gap)
-
+    _knife(s, a0)
     _write(path, s)
     return path
 
 
-def _blade(s, x):
-    """A knife coming down through the object, in the cutting plane."""
-    blade = np.array([
-        [x, -0.07, 0.10], [x, 0.07, 0.10],
-        [x, 0.07, 1.45], [x, -0.07, 1.45],
-    ])
-    handle = np.array([
-        [x, -0.10, 1.45], [x, 0.10, 1.45],
-        [x, 0.10, 2.05], [x, -0.10, 2.05],
-    ])
-    for quad, w in ((blade, 1.0), (handle, 1.0)):
-        v2, depth = s.project(quad)
-        d = 'M' + 'L'.join(f'{a:.1f} {b:.1f}' for a, b in v2) + 'Z'
-        s.add_raw(float(depth.mean()) - 1.5,
-                  f'<path d="{d}" fill="{PAPER}" stroke="{ACCENT}" '
-                  f'stroke-width="{w}" stroke-linejoin="round"/>')
+def _cut_face(s, ring):
+    """A fresh cut surface: outlined and lightly tinted, so the eye lands on
+    what changed rather than on the object's outline."""
+    r2, depth = s.project(ring)
+    r2 = MD.simplify(r2, eps=0.5)
+    if len(r2) < 3:
+        return
+    d = 'M' + 'L'.join(f'{x:.1f} {y:.1f}' for x, y in r2) + 'Z'
+    s.add_raw(float(depth.mean()) - 0.05,
+              f'<path d="{d}" fill="{ACCENT}" fill-opacity="0.16" '
+              f'stroke="{ACCENT}" stroke-width="1" stroke-linejoin="round"/>')
+
+
+def _knife(s, angle):
+    """A knife: tapered blade and handle, lying along the cut it made."""
+    d = np.array([np.cos(angle), np.sin(angle), 0.0])
+    up = np.array([0.0, 0.0, 1.0])
+    side = np.cross(d, up) * 0.045
+
+    def quad(a, b, za, zb, w=1.0):
+        return np.array([d * a + up * za - side * w, d * a + up * za + side * w,
+                         d * b + up * zb + side * w, d * b + up * zb - side * w])
+
+    blade = quad(-0.15, 1.05, 0.62, 0.86)
+    handle = quad(1.05, 1.62, 0.86, 0.96, w=1.7)
+    for shape in (blade, handle):
+        v2, depth = s.project(shape)
+        path = 'M' + 'L'.join(f'{a:.1f} {b:.1f}' for a, b in v2) + 'Z'
+        s.add_raw(float(depth.mean()) - 1.8,
+                  f'<path d="{path}" fill="{PAPER}" stroke="{INK}" '
+                  f'stroke-width="1" stroke-linejoin="round"/>')
 
 
 def _time_arrow(s, left, right):
@@ -95,8 +99,8 @@ def views_and_uncertainty(path):
     """One object seen from several cameras, drawn as the pyramid frusta the
     3D reconstruction literature uses, with a covariance ellipsoid on the view
     that is least well constrained."""
-    v, f = MD.prepare('lemon', faces=800)
-    obj = G.transform(G.y_up_to_z_up(v), 0.62, G.rot_z(0.4))
+    v, f = M.pyramid(base=1.25, height=1.15)
+    obj = G.transform(v, 0.78, G.rot_z(0.55), (0, 0, -0.34))
 
     cams = [(-1.30, 1.75, 0.0), (-0.30, 1.80, 0.0), (0.95, 2.15, 0.20)]
     centres = [np.array([np.cos(a) * d, np.sin(a) * d, 0.30 + 0.16 * i])
@@ -108,7 +112,7 @@ def views_and_uncertainty(path):
     eye = (3.0, -3.4, 2.1)
     s = Scene(eye, (0, 0, 0), scale=autoscale(eye, (0, 0, 0), span, margin=0.9))
 
-    s.add_mesh(obj, f, stroke=INK, width=1.0)
+    s.add_mesh(obj, f, stroke=INK, width=1.0, creases=True)
     for c, (_, _, sigma) in zip(centres, cams):
         _frustum(s, c, np.zeros(3), accent=sigma > 0)
         if sigma:

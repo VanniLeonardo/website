@@ -67,6 +67,21 @@ def potato(subdiv=3, seed=7):
     return v, f
 
 
+def pyramid(base=1.0, height=1.35):
+    """A square pyramid: a clean geometric solid whose pose is unambiguous,
+    which is the point when the drawing is about pose uncertainty."""
+    h = base / 2
+    v = np.array([
+        [-h, -h, 0.0], [h, -h, 0.0], [h, h, 0.0], [-h, h, 0.0],
+        [0.0, 0.0, height],
+    ])
+    f = np.array([
+        [0, 2, 1], [0, 3, 2],                      # base
+        [0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4],  # sides
+    ])
+    return v, f
+
+
 # ------------------------------------------------------------------ camera --
 def look_at(eye, target, up=(0, 0, 1)):
     eye, target, up = map(lambda a: np.asarray(a, float), (eye, target, up))

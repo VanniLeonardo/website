@@ -109,3 +109,14 @@ def simplify(points, eps=0.7, closed=True):
             stack += [(a, a + 1 + i), (a + 1 + i, b)]
     out = pts[keep]
     return out
+
+
+def radial_split(v, f, a0, a1):
+    """Return (wedge, remainder_pieces, rings) for a wedge between two angles."""
+    n0 = np.array([-np.sin(a0), np.cos(a0), 0.0])
+    n1 = np.array([np.sin(a1), -np.cos(a1), 0.0])
+
+    (side0, other0, ring0) = slice_capped(v, f, n0)
+    # side0 is the half on the +n0 side; cut it again to carve out the wedge.
+    (wedge_m, rest_m, ring1) = slice_capped(side0[0], side0[1], n1)
+    return wedge_m, [other0, rest_m], [ring0, ring1]
