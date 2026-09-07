@@ -81,6 +81,14 @@
     letter-spacing: -0.015em;
   }
 
+  /* One consistent focus ring for every interactive element. Keyboard only:
+     :focus-visible, so pointer users never see it. */
+  :where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 1px;
+  }
+
   ::selection {
     background-color: color-mix(in srgb, var(--accent) 22%, transparent);
   }

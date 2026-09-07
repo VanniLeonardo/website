@@ -38,7 +38,9 @@ const hasBody = Boolean(project.body?.replace(/<!--[\s\S]*?-->/g, '').trim());
   id={detailed ? project.id : undefined}
   class="grid scroll-mt-8 gap-x-10 gap-y-5 border-t border-border pt-8 sm:grid-cols-[9.5rem_1fr] md:grid-cols-[11rem_1fr]"
 >
-  <div class="max-w-[11rem] text-text sm:pt-1">
+  {/* Purely decorative: hidden below sm so a phone leads with the title and
+      the contribution, not an abstract diagram. */}
+  <div class="hidden max-w-[11rem] text-text sm:block sm:pt-1">
     <Motif kind={kind} />
   </div>
 

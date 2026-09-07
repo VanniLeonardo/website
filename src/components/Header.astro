@@ -14,7 +14,9 @@ const path = Astro.url.pathname.endsWith('/')
 const isActive = (href: string) => path === href || path.startsWith(href);
 ---
 
-{/* Mobile menu is a CSS-only disclosure (checkbox + peer) — no JavaScript. */}
+{/* Mobile menu is a native <details> disclosure — keyboard operable and
+    correctly announced as expanded/collapsed, with no JavaScript. Above md
+    the summary is hidden and the list is always shown. */}
 <header class="border-b border-border">
   <div
     class="mx-auto flex max-w-[62rem] flex-wrap items-baseline justify-between gap-x-6 px-5 py-5 sm:px-8"
@@ -23,35 +25,36 @@ const isActive = (href: string) => path === href || path.startsWith(href);
       >Leonardo Vanni</a
     >
 
-    <input type="checkbox" id="nav-toggle" class="peer sr-only" />
-    <label
-      for="nav-toggle"
-      class="cursor-pointer select-none border border-border px-3 py-1 font-mono text-[11px] tracking-[0.14em] text-muted uppercase peer-checked:border-accent peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent hover:border-accent md:hidden"
-    >
-      Menu
-    </label>
+    <details class="group w-full md:w-auto">
+      <summary
+        class="inline-block cursor-pointer list-none border border-border px-3 py-1 font-mono text-[11px] tracking-[0.14em] text-muted uppercase group-open:border-accent hover:border-accent md:hidden [&::-webkit-details-marker]:hidden"
+      >
+        Menu
+      </summary>
 
-    <nav aria-label="Main navigation" class="hidden w-full peer-checked:block md:block md:w-auto">
-      <ul class="flex flex-col gap-1 pt-3 md:flex-row md:gap-x-6 md:pt-0">
-        {
-          links.map((link) => (
-            <li>
-              <a
-                href={link.href}
-                aria-current={isActive(link.href) ? 'page' : undefined}
-                class:list={[
-                  'block py-1 font-mono text-[0.8rem] tracking-wide md:py-0',
-                  isActive(link.href)
-                    ? 'text-accent underline decoration-accent/50 underline-offset-4'
-                    : 'text-muted hover:text-accent',
-                ]}
-              >
-                {link.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
+      <nav aria-label="Main navigation" class="hidden w-full group-open:block md:block md:w-auto">
+        <ul class="flex flex-col gap-1 pt-3 md:flex-row md:gap-x-6 md:pt-0">
+          {
+            links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  aria-current={isActive(link.href) ? 'page' : undefined}
+                  class:list={[
+                    'block py-1 font-mono text-[0.8rem] tracking-wide md:py-0',
+                    isActive(link.href)
+                      ? 'text-accent underline decoration-accent/50 underline-offset-4'
+                      : 'text-muted hover:text-accent',
+                  ]}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </details>
   </div>
 </header>
+

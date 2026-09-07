@@ -14,6 +14,7 @@ import { byTumStart } from '../lib/dates.ts';
 interface HeroLink {
   label: string;
   url: string;
+  weight?: 'primary' | 'secondary';
 }
 const heroLinks: HeroLink[] = hero.links ?? [];
 
@@ -95,7 +96,7 @@ const personJsonLd = JSON.stringify({
 
   {/* Hero */}
   <section class="grid grid-cols-1 gap-10 md:grid-cols-[1fr_230px] md:gap-16">
-    <div class="order-2 md:order-1">
+    <div class="order-1">
       <h1 class="font-heading text-[2rem] font-semibold tracking-tight sm:text-4xl">
         {hero.name}
       </h1>
@@ -111,13 +112,21 @@ const personJsonLd = JSON.stringify({
         <HeroCurrently />
       </div>
 
-      <ul class="mt-6 flex flex-wrap gap-x-5 gap-y-1">
+      {/* Research CV leads, one-page CV follows, the rest stay quiet. */}
+      <ul class="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3">
         {
           heroLinks.map((link) => (
             <li>
               <a
                 href={link.url}
-                class="font-mono text-[0.8rem] text-accent underline decoration-accent/40 underline-offset-3 hover:text-text hover:decoration-text"
+                class:list={[
+                  link.weight === 'primary' &&
+                    'inline-block bg-accent px-4 py-2 font-medium text-bg hover:bg-text',
+                  link.weight === 'secondary' &&
+                    'inline-block border border-border px-4 py-2 font-medium text-text hover:border-accent hover:text-accent',
+                  !link.weight &&
+                    'font-mono text-[0.8rem] text-muted underline decoration-rule underline-offset-3 hover:text-accent hover:decoration-accent',
+                ]}
               >
                 {link.label}
               </a>
@@ -128,7 +137,7 @@ const personJsonLd = JSON.stringify({
 
       {hero.seeking && <p class="mt-5 text-sm text-muted">{hero.seeking}</p>}
     </div>
-    <div class="order-1 mx-auto w-44 sm:w-52 md:order-2 md:mx-0 md:mt-2 md:w-full">
+    <div class="order-2 mx-auto mt-2 w-44 sm:w-52 md:order-2 md:mx-0 md:w-full">
       <PhotoPlaceholder />
     </div>
   </section>
