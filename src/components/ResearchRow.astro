@@ -19,10 +19,11 @@ const { title, shortTitle, hook, oneLiner, abstract, role, collaborators, status
   project.data;
 
 const motifKinds = {
+  'current-research': 'cut',
   thesis: 'covariance',
   'prosthetic-arm': 'grasp',
 } as const;
-const kind = motifKinds[project.id as keyof typeof motifKinds] ?? 'pointcloud';
+const kind = motifKinds[project.id as keyof typeof motifKinds] ?? 'covariance';
 
 // Links whose URL contains "[PLACEHOLDER" stay in the content file but are
 // never rendered.
