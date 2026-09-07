@@ -7,7 +7,8 @@ interface Props {
 
 const { title, description, ogImage = '/og-default.png' } = Astro.props;
 
-// Canonical on the www host; Astro.site is https://www.leonardovanni.com
+// Canonical on the apex host; Astro.site is https://leonardovanni.com.
+// www.leonardovanni.com 301-redirects here, so the apex is the one true URL.
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImageUrl = new URL(ogImage, Astro.site);
 ---

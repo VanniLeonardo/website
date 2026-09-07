@@ -9,7 +9,7 @@ import rehypeKatex from 'rehype-katex';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://www.leonardovanni.com',
+  site: 'https://leonardovanni.com',
   integrations: [mdx(), sitemap()],
   // Old routes folded into the simplified nav (static meta-refresh pages).
   redirects: {

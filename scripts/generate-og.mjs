@@ -37,12 +37,24 @@ const inter = await toTtf(
   'inter-400.ttf',
 );
 
+// Mirrors byTumStart() in src/lib/dates.ts. Duplicated rather than imported
+// because this script runs as plain .mjs outside the Astro/TS pipeline; keep
+// the date in step with that module.
+const tumLine =
+  Date.now() >= new Date(2026, 9, 1).valueOf()
+    ? 'M.Sc. student, Technical University of Munich'
+    : 'Incoming M.Sc., Technical University of Munich';
+
 // Warm paper --bg, name in Space Grotesk, subtitle, one thin rust rule.
+// SVG <text> does not wrap: at 34px the subtitle fits ~60 characters before
+// it runs off the 1200px canvas, and ~72 at 28px. Re-run `npm run og` and
+// look at the PNG after any wording change.
 const svg = `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
   <rect width="1200" height="630" fill="#F6F3EC"/>
   <text x="96" y="318" font-family="Space Grotesk" font-weight="600" font-size="86" fill="#1E1B16">Leonardo Vanni</text>
   <line x1="98" y1="362" x2="568" y2="362" stroke="#96431C" stroke-width="3"/>
-  <text x="96" y="432" font-family="Inter" font-size="34" fill="#5F584A">3D/4D computer vision — for scenes that move, break, and change</text>
+  <text x="96" y="432" font-family="Inter" font-size="34" fill="#5F584A">3D/4D computer vision — dynamic scenes, reliable geometry</text>
+  <text x="96" y="486" font-family="Inter" font-size="28" fill="#8A8170">${tumLine}</text>
 </svg>`;
 
 const resvg = new Resvg(svg, {

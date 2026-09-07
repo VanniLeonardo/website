@@ -51,16 +51,38 @@ const news = (await getCollection('news'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 4);
 
+// Bocconi is a completed degree (alumniOf); TUM is where he studies from
+// October 2026 — represented as affiliation only once the programme starts,
+// so the markup never implies a degree he does not yet hold.
 const personJsonLd = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Leonardo Vanni',
-  url: 'https://www.leonardovanni.com',
-  sameAs: ['https://github.com/VanniLeonardo', 'https://www.linkedin.com/in/leonardo-vanni/'],
-  affiliation: {
+  url: 'https://leonardovanni.com',
+  jobTitle: byTumStart(
+    'Incoming M.Sc. student, Technical University of Munich',
+    'M.Sc. student, Technical University of Munich',
+  ),
+  description:
+    'Computer vision researcher working on geometry-grounded 3D and 4D reconstruction and uncertainty estimation.',
+  sameAs: [
+    'https://github.com/VanniLeonardo',
+    'https://www.linkedin.com/in/leonardo-vanni/',
+    'https://orcid.org/0009-0003-1869-9286',
+    'https://scholar.google.com/citations?user=xXGobYsAAAAJ&hl=en',
+  ],
+  alumniOf: {
     '@type': 'CollegeOrUniversity',
     name: 'Bocconi University',
+    url: 'https://www.unibocconi.it',
   },
+  ...(byTumStart(false, true) && {
+    affiliation: {
+      '@type': 'CollegeOrUniversity',
+      name: 'Technical University of Munich',
+      url: 'https://www.tum.de/en/',
+    },
+  }),
   email: 'mailto:info@leonardovanni.com',
 });
 ---
