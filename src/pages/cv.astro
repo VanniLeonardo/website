@@ -40,7 +40,7 @@ const researchAreas: string[] = frontmatter.researchAreas ?? [];
 const tools: ToolGroup[] = frontmatter.tools ?? [];
 ---
 
-<Base title="CV — Leonardo Vanni" description={frontmatter.description}>
+<Base title="CV | Leonardo Vanni" description={frontmatter.description}>
   <h1 class="font-heading text-3xl font-semibold">{frontmatter.title}</h1>
 
   {/* Downloads: research CV leads, the one-page resume follows. */}
@@ -74,7 +74,7 @@ const tools: ToolGroup[] = frontmatter.tools ?? [];
             <p class="kicker">{entry.period}</p>
             <p class="mt-1 font-heading text-base font-semibold">{entry.institution}</p>
             <p class="mt-0.5 text-[0.95rem] text-muted">
-              {entry.qualification} — {entry.note}
+              {entry.qualification}. {entry.note}
             </p>
           </li>
         ))
@@ -122,7 +122,7 @@ const tools: ToolGroup[] = frontmatter.tools ?? [];
     <p class="mt-4 text-[0.95rem] text-muted">{frontmatter.languages}</p>
   </section>
 
-  {/* Contact: email / LinkedIn / GitHub only — never a phone number. */}
+  {/* Contact: email, LinkedIn and GitHub only. Never a phone number. */}
   <section class="mt-14 border-t border-border pt-8">
     <h2 class="kicker">Contact</h2>
     <ul class="mt-4 flex flex-wrap gap-x-5 gap-y-1">

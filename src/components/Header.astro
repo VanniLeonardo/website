@@ -58,3 +58,15 @@ const isActive = (href: string) => path === href || path.startsWith(href);
   </div>
 </header>
 
+<style>
+  /* Above the mobile breakpoint this is not a disclosure at all: the nav is
+     always visible, whether or not the <details> happens to be open. The
+     display rule alone is not enough, because a closed <details> skips its
+     content from layout entirely. */
+  @media (min-width: 48rem) {
+    details::details-content {
+      content-visibility: visible;
+      contain-intrinsic-size: auto none;
+    }
+  }
+</style>

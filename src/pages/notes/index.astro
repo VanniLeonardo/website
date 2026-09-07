@@ -8,10 +8,10 @@ const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort(
 );
 ---
 
-<Base title="Notes — Leonardo Vanni" description={frontmatter.description}>
+<Base title="Notes | Leonardo Vanni" description={frontmatter.description}>
   <h1 class="font-heading text-3xl font-semibold">{frontmatter.title}</h1>
 
-  {/* Intro sentence (doubles as the empty state — no dummy posts). */}
+  {/* Intro sentence, which doubles as the empty state. No dummy posts. */}
   <div class="prose mt-6 text-muted">
     <NotesIntro />
   </div>

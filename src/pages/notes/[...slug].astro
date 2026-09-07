@@ -20,7 +20,7 @@ const { Content } = await render(note);
 const iso = note.data.date.toISOString().slice(0, 10);
 ---
 
-<Base title={`${note.data.title} — Leonardo Vanni`} description={note.data.description}>
+<Base title={`${note.data.title} | Leonardo Vanni`} description={note.data.description}>
   <article class="max-w-[72ch]">
     <header>
       <h1 class="font-heading text-3xl font-semibold text-balance">{note.data.title}</h1>

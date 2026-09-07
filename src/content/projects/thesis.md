@@ -1,25 +1,26 @@
 ---
 title: "Geometrically-Grounded Uncertainty Quantification for Foundational 3D Vision Models"
 shortTitle: "SE(3) Uncertainty for VGGT"
-hook: "A 3D foundation model that knows when it's wrong."
+hook: "A 3D foundation model that reports when its own pose estimates are unreliable."
 oneLiner: >
-  Extends VGGT with a decoupled branch predicting full 6×6 camera-pose
-  covariances on the SE(3) manifold. The uncertainty calibrates with a single
-  temperature, structurally matches Bundle-Adjustment covariances, and spikes
-  exactly on mislocalized frames — a built-in failure detector.
+  Extends VGGT with a separate branch that predicts a full 6x6 camera-pose
+  covariance on the SE(3) manifold. A single temperature calibrates the
+  uncertainty, its structure matches the covariances produced by bundle
+  adjustment, and it rises sharply on frames the model has placed wrongly,
+  which gives the system a built-in failure detector.
 abstract: >
-  Foundational 3D models such as VGGT regress camera poses deterministically,
-  with no measure of confidence — which makes them unusable wherever
+  Foundation models for 3D vision such as VGGT predict camera poses without
+  any measure of confidence, which makes them difficult to use wherever
   probabilistic reasoning matters, from sensor fusion to active vision. This
-  thesis extends VGGT with a decoupled covariance branch that predicts a full
-  6×6 camera-pose covariance, formulated rigorously on the SE(3) manifold: a
+  thesis extends VGGT with a separate covariance branch that predicts a full
+  6x6 camera-pose covariance, formulated on the SE(3) manifold. It uses a
   body-centric perturbation model on the Lie algebra se(3), a left-invariant
-  weighted metric reconciling translational and rotational units, and a
-  scale-aware negative log-likelihood trained with a curriculum strategy for
-  stability. On CO3D, the learned uncertainty is calibratable with a single
-  temperature and structurally matches analytical covariances from Bundle
-  Adjustment; on EPIC-KITCHENS, the predicted variance spikes exactly on
-  mislocalized frames — a built-in failure detector.
+  weighted metric that reconciles translational and rotational units, and a
+  scale-aware negative log-likelihood trained with a curriculum for stability.
+  On CO3D, a single temperature calibrates the learned uncertainty and its
+  structure matches the analytical covariances of bundle adjustment. On
+  EPIC-KITCHENS, the predicted variance rises sharply on frames the model has
+  placed wrongly, which gives the system a built-in failure detector.
 tags:
   - 3D vision
   - structure-from-motion
@@ -27,7 +28,7 @@ tags:
   - uncertainty estimation
   - VGGT
   - probabilistic deep learning
-role: "Sole author (BSc thesis) — supervised by Prof. Alessandro Pigati, Bocconi University"
+role: "Sole author, BSc thesis. Supervised by Prof. Alessandro Pigati, Bocconi University."
 status: completed
 period: "2026"
 links:
@@ -43,20 +44,20 @@ order: 2
      A code link is added only when a cleaned public repo exists. -->
 
 **Problem.** Feed-forward 3D foundation models made reconstruction fast and
-robust, but they answer with a single deterministic guess. Downstream systems —
-sensor fusion, active vision, robotics — need to know *how much* to trust each
-pose, not just what it is.
+robust, but they answer with a single estimate and no measure of confidence.
+Downstream systems such as sensor fusion, active vision, and robotics need to
+know how far to trust each pose, not only what the pose is.
 
-**Idea.** Keep VGGT's state-of-the-art mean prediction frozen, and train a
-parallel lightweight branch to predict a full $6 \times 6$ covariance over
-each camera pose, formulated properly on $\mathrm{SE}(3)$: body-centric
+**Idea.** Keep VGGT's existing pose prediction frozen, and train a second
+lightweight branch to predict a full $6 \times 6$ covariance for each camera
+pose, formulated on $\mathrm{SE}(3)$. The branch uses body-centric
 perturbations on the Lie algebra, a left-invariant metric that reconciles
 meters with radians, and a scale-aware negative log-likelihood with a
-curriculum that prevents degenerate collapse.
+curriculum that prevents the covariances from collapsing.
 
 **Why it matters.** On CO3D the learned covariances calibrate with a single
-temperature and structurally match the analytical covariances of classical
-Bundle Adjustment; on EPIC-KITCHENS the predicted variance spikes exactly on
-mislocalized frames. That turns a black-box reconstructor into a component you
-can put inside a probabilistic pipeline — and gives it a failure detector for
-free.
+temperature, and their structure matches the analytical covariances of
+classical bundle adjustment. On EPIC-KITCHENS the predicted variance rises
+sharply on frames the model has placed wrongly. Together these results turn an
+opaque reconstruction model into a component that can sit inside a
+probabilistic pipeline, and give it a failure detector at no extra cost.

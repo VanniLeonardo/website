@@ -67,7 +67,8 @@ const hasBody = Boolean(project.body?.replace(/<!--[\s\S]*?-->/g, '').trim());
 
     {detailed && <p class="mt-3 font-heading text-lg font-medium text-balance">{hook}</p>}
 
-    {/* Compact: the 1–2 sentence contribution. Detailed: body or abstract — never both, no repetition. */}
+    {/* Compact: the one or two sentence contribution. Detailed: body or
+        abstract, never both, so nothing repeats. */}
     {!detailed && <p class="mt-3 text-[0.95rem] leading-relaxed">{oneLiner.trim()}</p>}
 
     {detailed && !hasBody && <p class="mt-3 text-[0.95rem] leading-relaxed">{abstract.trim()}</p>}
@@ -89,10 +90,11 @@ const hasBody = Boolean(project.body?.replace(/<!--[\s\S]*?-->/g, '').trim());
     }
 
     <p class="mt-4 text-sm text-muted">
-      {role}{collaborators && <> — {collaborators}</>}
+      {role}
+      {collaborators && <>{' '}{collaborators}</>}
     </p>
 
-    {/* Links row OR the muted comingSoon line — never both. */}
+    {/* Links row or the muted comingSoon line, never both. */}
     {
       visibleLinks.length > 0 ? (
         <ul class="mt-3 flex flex-wrap gap-x-5 gap-y-1">

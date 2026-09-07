@@ -1,6 +1,6 @@
 ---
 title: "Experience"
-description: "Experience of Leonardo Vanni: open-source contributions to Kornia, medical 3D vision, real-time perception for an intelligent prosthetic arm, and ML engineering at Accenture."
+description: "Experience of Leonardo Vanni. Open-source contributions to Kornia, medical 3D vision, real-time perception for a prosthetic arm, and machine learning engineering at Accenture."
 # Roles, newest first. Every bullet must be supported by the current CV.
 # `featured` entries also appear, without bullets, on the homepage.
 entries:
@@ -10,7 +10,7 @@ entries:
     featured: true
     bullets:
       - "Added MAE, RMSE, and bad-pixel stereo disparity metrics, with tests and documentation."
-      - "Removed import-time TorchScript decorators across the geometry module, improving import behaviour library-wide."
+      - "Removed import-time TorchScript decorators across the geometry module, which improves import behaviour across the library."
     links:
       - label: "Disparity metrics (PR #3743)"
         url: "https://github.com/kornia/kornia/pull/3743"
@@ -21,27 +21,27 @@ entries:
     period: "June 2025 – September 2025"
     featured: true
     bullets:
-      - "Built a GPU-accelerated CT reconstruction and 3D U-Net segmentation and classification pipeline for tooth- and lesion-level patient reports."
-      - "Added ensemble-based voxel uncertainty, temperature calibration, and confidence-based abstention on high-risk predictions."
+      - "Built a GPU-accelerated CT reconstruction and 3D U-Net pipeline that segments and classifies scans, producing reports at the level of individual teeth and lesions."
+      - "Added ensemble-based voxel uncertainty, temperature calibration, and abstention on high-risk predictions when confidence is low."
   - role: "Computer Vision Lead, Intelligent Prosthetic Arm"
     organization: "Politecnico di Milano & Bocconi AI and Neuroscience Association"
     period: "September 2024 – June 2025"
     featured: true
     bullets:
       - "Led 3D scene perception for an EEG-controlled prosthetic arm, combining object detection, monocular depth, segmentation, hand tracking, and Kalman-filtered state estimation."
-      - "Implemented real-time grasp validation from object geometry and hand pose, with a GUI demonstrator and containerized deployment."
+      - "Implemented real-time grasp validation from object geometry and hand pose, with a graphical demonstrator and a containerized deployment."
     links:
       - label: "Code (GitHub)"
         url: "https://github.com/VanniLeonardo/Prosthetic-Arm"
       - label: "Report (ResearchGate)"
         url: "https://www.researchgate.net/publication/393399982_Vision-Based_Grasp_Validation_for_Prosthetic_Arms_using_3D_Scene_Analysis"
-  - role: "Machine Learning Engineer, Data & AI"
+  - role: "Machine Learning Engineer, Data and AI"
     organization: "Accenture"
     period: "June 2025 – September 2025"
     featured: true
     bullets:
       - "Built a BERT and medical-LLM pipeline mapping diagnoses to a 20,000-class medical ontology with 94% accuracy."
-      - "Increased OCR and OpenCV document throughput 7.5×, from 2 to 15 documents per minute."
+      - "Increased OCR and OpenCV document throughput from 2 to 15 documents per minute, a 7.5 times improvement."
 # Compact teaching and leadership block, shown below the roles.
 teaching:
   - role: "Teaching Assistant, Mathematical Analysis II"
