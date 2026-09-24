@@ -1,15 +1,9 @@
 ---
-import fs from 'node:fs';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import { Content as ThesisBody, frontmatter as thesis } from '../content/pages/thesis-page.md';
 import calibration from '../assets/thesis/calibration.png';
 import ellipsoids from '../assets/thesis/ellipsoids.png';
-
-// The PDF is owner-supplied (acknowledgements-free) into public/thesis/.
-// The download button only renders once the file actually exists — no broken
-// links, no placeholder PDFs; it appears automatically on the next build.
-const pdfExists = fs.existsSync(new URL(`../../public${thesis.pdf}`, import.meta.url));
 
 // BibTeX from the Cite block in src/content/pages/thesis-page.md.
 const citation = `@thesis{vanni2026geometric,
@@ -29,7 +23,7 @@ const thesisJsonLd = JSON.stringify({
   author: {
     '@type': 'Person',
     name: 'Leonardo Vanni',
-    url: 'https://www.leonardovanni.com',
+    url: 'https://leonardovanni.com',
   },
   sourceOrganization: {
     '@type': 'CollegeOrUniversity',
@@ -47,23 +41,24 @@ const thesisJsonLd = JSON.stringify({
       {thesis.kind} · {thesis.institution} · {thesis.year} · Supervisor: {thesis.supervisor}
     </p>
     <h1 class="mt-3 font-heading text-3xl font-semibold text-balance">{thesis.title}</h1>
-    {
-      pdfExists ? (
-        <a
-          href={thesis.pdf}
-          class="mt-6 inline-block bg-accent px-5 py-2.5 font-medium text-bg hover:bg-text"
-        >
-          Download thesis (PDF)
-        </a>
-      ) : (
-        <p class="mt-6 text-sm text-muted italic">
-          PDF coming online soon. <a
-            href="mailto:info@leonardovanni.com"
-            class="underline underline-offset-3 hover:text-text">email me</a
-          > for a copy in the meantime.
-        </p>
-      )
-    }
+    <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+      <a
+        href={thesis.pdf}
+        class="inline-block bg-accent px-5 py-2.5 font-medium text-bg hover:bg-text"
+      >
+        Download thesis (PDF)
+      </a>
+      <a
+        href={thesis.repo}
+        class="font-mono text-[0.8rem] text-muted underline decoration-rule underline-offset-3 hover:text-accent hover:decoration-accent"
+        >Code (GitHub)</a
+      >
+      <a
+        href={thesis.release}
+        class="font-mono text-[0.8rem] text-muted underline decoration-rule underline-offset-3 hover:text-accent hover:decoration-accent"
+        >Release v1.0.0, with trained weights</a
+      >
+    </div>
   </header>
 
   <div class="prose mt-10">
@@ -71,18 +66,28 @@ const thesisJsonLd = JSON.stringify({
   </div>
 
   <figure class="mt-10 max-w-[72ch]">
-    <Image src={calibration} alt="Calibration plot" class="border border-border" />
+    <Image
+      src={calibration}
+      alt="Coverage plot: fraction of frames inside each chi-squared region against the nominal level, for the raw and temperature-calibrated model, both close to the diagonal."
+      class="border border-border"
+    />
     <figcaption class="mt-2 text-sm text-muted">
-      Temperature scaling (T = 3.33) aligns the empirical Mahalanobis CDF with the theoretical
-      chi-squared ideal.
+      Coverage on the evaluation subset: the fraction of frames whose squared Mahalanobis distance
+      falls inside each nominal χ²₆ region. The raw and calibrated curves almost coincide, because
+      the fitted temperature is T = 1.01: the trained head is already calibrated on typical frames.
     </figcaption>
   </figure>
 
   <figure class="mt-10 max-w-[72ch]">
-    <Image src={ellipsoids} alt="Uncertainty ellipsoid render" class="border border-border" />
+    <Image
+      src={ellipsoids}
+      alt="Two renders of the same scene. Left: camera-centre uncertainty ellipsoids predicted by the model. Right: the analytical ellipsoids from bundle adjustment, drawn at 75 times scale."
+      class="border border-border"
+    />
     <figcaption class="mt-2 text-sm text-muted">
-      Predicted translational uncertainty grows with distance from the reference camera and aligns
-      with COLMAP's analytical covariance axes.
+      Predicted 95% camera-centre ellipsoids (left) against the analytical covariance of bundle
+      adjustment for the same scene (right, drawn at ×75). The orientation and the relative sizes
+      agree; the magnitudes do not, which is why the comparison is structural.
     </figcaption>
   </figure>
 

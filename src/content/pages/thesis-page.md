@@ -4,15 +4,18 @@ kind: "BSc thesis"
 institution: "Bocconi University"
 supervisor: "Prof. Alessandro Pigati"
 year: 2026
-pdf: "/thesis/vanni-2026-bsc-thesis.pdf"
+pdf: "https://github.com/VanniLeonardo/Bachelor-Thesis/releases/download/v1.0.0/bachelor_thesis.pdf"
+repo: "https://github.com/VanniLeonardo/Bachelor-Thesis"
+release: "https://github.com/VanniLeonardo/Bachelor-Thesis/releases/tag/v1.0.0"
 description: "BSc thesis extending VGGT with camera-pose uncertainty on SE(3), for learned structure from motion."
 ---
 
 ## Summary
 
 Modern 3D foundation models reconstruct a scene in a single forward pass, but
-they give one answer with no sense of how far to trust it. This thesis teaches
-one of them to report when it is likely to be wrong.
+they give one answer with no measure of how much to trust it. This thesis
+gives one of them a distribution over the poses it predicts, and asks how far
+that distribution can be believed.
 
 ## Abstract
 
@@ -23,13 +26,19 @@ thesis extends VGGT with a separate covariance branch that predicts a full
 $6 \times 6$ camera-pose covariance, formulated rigorously on the
 $\mathrm{SE}(3)$ manifold: a body-centric perturbation model on the Lie
 algebra $\mathfrak{se}(3)$, a left-invariant weighted metric reconciling
-translational and rotational units, and a scale-aware negative log-likelihood
-trained with a curriculum for stability. Experiments on CO3D show that a
-single temperature calibrates the learned uncertainty and that its structure
-matches the analytical covariances of classical bundle adjustment. Robustness
-tests on EPIC-KITCHENS show the predicted variance rising sharply on frames
-the model has placed wrongly, which gives the system a built-in failure
-detector.
+translational and rotational units, trained with a curriculum for stability.
+The backbone and the mean-pose pathway stay frozen, so the point estimates of
+the base model are unchanged. On held-out CO3D sequences the predicted
+uncertainty ranks frames by their pose error and has the right scale on
+typical frames, though the errors are heavier-tailed than the Gaussian model
+assumes. Its structure matches the analytical covariance of bundle adjustment
+on example scenes. On dynamic EPIC-KITCHENS video the uncertainty is large
+across the whole reconstruction, correctly signalling that it is unreliable.
+
+This is the revised version released in September 2026. Implementation errors
+in the original training and evaluation code were found while preparing the
+public release; they were corrected, the model was retrained, and every
+quantitative result and figure was recomputed with the released code.
 
 ## Contributions
 
@@ -37,24 +46,15 @@ detector.
   distribution over camera poses instead of a single estimate, while its
   existing pose prediction is preserved exactly through a frozen pathway.
 - **A separate covariance head.** A parallel lightweight branch conditioned on
-  visual evidence, the solver's internal state, and an explicit embedding of
-  scene scale.
+  visual evidence and the solver's internal state.
 - **Geometric rigour on Lie groups.** Body-centric perturbations on
   $\mathfrak{se}(3)$, a weighted left-invariant Riemannian metric, and a
-  scale-aware negative log-likelihood with Cholesky-parameterized covariances.
+  negative log-likelihood with Cholesky-parameterized covariances.
 - **A stable training strategy.** A curriculum that begins with
   regularization over scale, conditioning and balance, followed by fine-tuning
   on the negative log-likelihood, which prevents the covariances from
   collapsing.
 
-<!-- FIGURES: export two from the thesis PDF and place in src/assets/thesis/:
-     1. Calibration plot (Figure 2, p.33). Caption: "Temperature scaling
-        (T = 3.33) aligns the empirical Mahalanobis CDF with the theoretical
-        chi-squared ideal."
-     2. One uncertainty-ellipsoid render — recommended: the Kitchen sequence
-        (Figure 6) or Pyramid sequence (Figure 5). Caption: "Predicted
-        translational uncertainty grows with distance from the reference
-        camera and aligns with COLMAP's analytical covariance axes." -->
 
 <!-- ## Cite
 

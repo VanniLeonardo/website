@@ -32,14 +32,13 @@ advertised. `/projects/` and `/teaching/` are static redirects (see
 `astro.config.mjs`); projects merged into `/research/`, teaching and
 leadership onto `/experience/`.
 
-## Owner-supplied assets (never commit placeholders)
+## External assets
 
-Still missing:
+The thesis is public: `/thesis/` links to the PDF, the code and the trained
+weights in the `v1.0.0` release of
+[VanniLeonardo/Bachelor-Thesis](https://github.com/VanniLeonardo/Bachelor-Thesis).
+Nothing is served from `public/`, so the 18 MB PDF stays out of this repo.
 
-- `public/thesis/vanni-2026-bsc-thesis.pdf` — thesis PDF, acknowledgements
-  removed. The "Download thesis (PDF)" button on `/thesis/` renders only once
-  this file exists (build-time `fs.existsSync` check in
-  `src/pages/thesis.astro`); until then the page shows an "email me" line.
 Google Scholar and ORCID links in `src/content/pages/contact.md` are live and
 verified, and both appear in the homepage JSON-LD `sameAs`.
 
